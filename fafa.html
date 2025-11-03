@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <link rel="stylesheet" href="fafa.css">
+</head>
+<body>
+    <div class="language-selector">
+    <button onclick="setLanguage('KZ')">KZ</button>
+    <button class="active" onclick="setLanguage('RU')">RU</button>
+    <button onclick="setLanguage('EN')">EN</button>
+    </div>
+
+    <div class="container">
+        <div class="left-side">
+    <img src="Kini German.png" alt="Logo" class="logo"> 
+    <p class="welcome-text">Добро пожаловать!</p>
+    <p class="description-text">Ваш образовательный портал для современного обучения</p>
+</div>
+
+        <div class="right-side">
+    <div class="login-form">
+        <h1 id="header-title">Вход в систему</h1>
+        <form id="loginForm">
+            
+            <label for="login" id="label-login">Логин</label>
+            <input type="text" placeholder="Введите логин" id="login" data-placeholder-ru="Введите логин" data-placeholder-kz="Логинді енгізіңіз" data-placeholder-en="Enter login">
+            
+            <label for="password" id="label-password">Пароль</label>
+            <input type="password" placeholder="Введите пароль" id="password" data-placeholder-ru="Введите пароль" data-placeholder-kz="Құпия сөзді енгізіңіз" data-placeholder-en="Enter password">
+            
+            <a href="#" class="forgot-password" id="forgot-link">Забыли пароль?</a>
+            <button type="submit" class="login-btn" id="login-button">Войти</button>
+            <p class="error-message" id="errorMessage"></p>
+            
+            <p class="register-text" id="register-prompt">
+                Нет аккаунта? <a href="Registration.html" class="register-link" id="register-link-text">Регистрация</a>
+            </p>
+            
+        </form>
+    </div>
+</div>
+
+    <script>
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const login = document.getElementById("login").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorMessage = document.getElementById("errorMessage");
+
+        // 1. Сброс сообщений и установка стиля ошибки по умолчанию
+        errorMessage.textContent = ""; 
+        errorMessage.style.fontSize = "0.9em";
+        errorMessage.style.color = "red"; 
+
+        // 2. Проверка: "Сперва введите свой логин и пароль"
+        if (!login || !password) {
+            errorMessage.textContent = "Сперва введите свой логин и пароль";
+            return;
+        }
+
+        // --- ИМИТАЦИЯ УСПЕШНОЙ АВТОРИЗАЦИИ ДЛЯ Yerkebulan/12345 ---
+        if (login === "Yerkebulan" && password === "12345") {
+            // УСПЕШНЫЙ ВХОД
+            errorMessage.style.color = "green";
+            errorMessage.textContent = "Авторизация прошла успешно";
+            
+            // Перенаправление на static.html через 1 секунду
+            setTimeout(() => {
+                window.location.href = "static.html"; 
+            }, 1000); 
+            return;
+        }
+        // ---------------------------------------------------------------
+        
+        // 3. Запрос к реальному серверу (если он не Yerkebulan/12345)
+        try {
+            const response = await fetch("http://localhost:3000/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ login, password })
+            });
+
+            if (response.ok) {
+                // Если сервер вернул успех для других данных (если поддерживается)
+                errorMessage.style.color = "green";
+                errorMessage.textContent = "Авторизация прошла успешно";
+                setTimeout(() => {
+                    window.location.href = "static.html"; 
+                }, 1000);
+            } else {
+                // 4. Сообщение: "Неверный логин и пароль" (от сервера)
+                errorMessage.textContent = "Неверный логин и пароль";
+            }
+        } catch (error) {
+            // Ошибка, если сервер недоступен
+            errorMessage.textContent = "Ошибка подключения к серверу. Попробуйте позже.";
+            console.error("Fetch error:", error);
+        }
+    });
+</script>
+<script>
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Останавливаем стандартную отправку формы
+
+        const login = document.getElementById("login").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const agree = document.getElementById("agree").checked;
+        const messageElement = document.getElementById("registrationMessage");
+
+        // Сброс стилей
+        messageElement.textContent = "";
+        messageElement.style.color = "red";
+        messageElement.style.fontSize = "0.9em";
+
+        // --- 1. ПРОВЕРКА ПУСТЫХ ПОЛЕЙ ---
+        if (!login || !password) {
+            messageElement.textContent = "Сперва введите логин и пароль";
+            return;
+        }
+
+        // --- ПРОВЕРКА СОГЛАСИЯ (дополнительно) ---
+        if (!agree) {
+            messageElement.textContent = "Вы должны согласиться на обработку персональных данных";
+            return;
+        }
+
+        // --- 2. ИМИТАЦИЯ УСПЕШНОЙ РЕГИСТРАЦИИ ---
+        // 1. Сохраняем логин в localStorage для автозаполнения
+        localStorage.setItem('lastRegisteredLogin', login);
+
+        // 2. Выводим зеленое сообщение об успехе
+        messageElement.style.color = "green";
+        messageElement.textContent = "Регистрация успешно";
+
+        // 3. Перенаправление на страницу входа (fafa.html) через 2 секунды
+        setTimeout(() => {
+            window.location.href = "fafa.html";
+        }, 2000); 
+
+        // В реальном приложении здесь был бы AJAX запрос на сервер
+    });
+</script>

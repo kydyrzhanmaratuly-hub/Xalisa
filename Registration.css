@@ -1,0 +1,115 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /* Используем более современный шрифт, если доступен */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+}
+
+/* --- ОСНОВНЫЕ СТИЛИ --- */
+body {
+    /* Меняем фон на более спокойный, чтобы выделить форму */
+    background-color: #f4f7f9; 
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- КОНТЕЙНЕР ФОРМЫ (КАРТОЧКА) --- */
+.register-container {
+    background: white;
+    padding: 40px 35px;
+    border-radius: 20px;
+    /* Улучшаем тень: более мягкая и рассеянная */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); 
+    width: 360px;
+    border: 1px solid #e5e7eb; /* Тонкая светлая граница для минимализма */
+}
+
+.register-form h1 {
+    text-align: center;
+    font-size: 26px; /* Чуть меньше */
+    font-weight: 600; /* Более тонкий жирный шрифт */
+    margin-bottom: 30px;
+    color: #1f2937; /* Темный, но не чисто черный */
+}
+
+/* --- ЭЛЕМЕНТЫ ФОРМЫ --- */
+label {
+    display: block;
+    font-size: 13px; /* Немного уменьшаем для чистоты */
+    font-weight: 500;
+    color: #4b5563; /* Мягкий серый цвет */
+    margin-bottom: 5px;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px 12px; /* Чуть больше вертикальный padding */
+    border: 1px solid #d1d5db; /* Тонкая, едва заметная рамка */
+    border-radius: 8px;
+    background-color: #f9fafb; /* Очень светлый фон */
+    font-size: 15px;
+    margin-bottom: 20px; /* Увеличиваем вертикальное пространство */
+    outline: none;
+    transition: all 0.2s ease-in-out;
+}
+
+input[type="email"]:focus,
+input[type="text"]:focus,
+input[type="password"]:focus {
+    background-color: #ffffff; /* Белый фон при фокусе */
+    border-color: #54af77; /* Фокусная рамка в цвет кнопки */
+    box-shadow: 0 0 0 1px #54af77; /* Тонкий box-shadow */
+}
+
+/* --- СОГЛАШЕНИЕ И ЧЕКБОКС --- */
+.agreement {
+    display: flex;
+    align-items: flex-start; /* Выравнивание по верхнему краю, если текст длинный */
+    gap: 8px;
+    font-size: 12px; /* Очень маленький для минимализма */
+    margin-bottom: 25px;
+    color: #6b7280;
+}
+
+.agreement input[type="checkbox"] {
+    /* Стилизация чекбокса для более современного вида */
+    flex-shrink: 0; /* Чтобы чекбокс не сжимался */
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+}
+
+/* --- КНОПКА РЕГИСТРАЦИИ --- */
+.register-btn {
+    width: 100%;
+    padding: 15px; /* Чуть больше padding */
+    background-color: #54af77; /* Сохраняем ваш зеленый цвет */
+    color: white;
+    font-size: 16px;
+    font-weight: 600; /* Соответствует заголовку */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 0.5px; /* Небольшой трекинг для минималистичного вида */
+    box-shadow: 0 4px 10px rgba(84, 175, 119, 0.3); /* Мягкая тень кнопки */
+    transition: 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #459a67; /* Немного темнее */
+    box-shadow: 0 6px 12px rgba(84, 175, 119, 0.4);
+    transform: translateY(-1px); /* Легкий эффект поднятия */
+}
+/* Добавьте это в ваш Registration.css */
+.error-message {
+    font-size: 0.9em;
+    font-weight: bold;
+    min-height: 20px; 
+    margin: 10px 0; /* Отступ от элементов */
+    text-align: center;
+}

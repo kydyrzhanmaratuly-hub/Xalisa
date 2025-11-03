@@ -1,0 +1,247 @@
+/* Общие стили для body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* Светло-серый фон */
+    display: flex;
+    justify-content: center; /* Центрируем контент по горизонтали */
+    align-items: center; /* Центрируем контент по вертикали */
+    min-height: 100vh; /* Минимальная высота на весь экран */
+    position: relative; /* Для позиционирования переключателя языков */
+    overflow: hidden; /* Убираем лишние скроллы, если будут */
+}
+
+/* Контейнер для двух сторон */
+.container {
+    display: flex;
+    background-color: #fff;
+    border-radius: 20px; /* Скругленные углы всего контейнера */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Легкая тень */
+    overflow: hidden; /* Убедимся, что скругленные углы видны */
+    width: 1,874px; /* Или фиксированная ширина, например 1000px */
+    max-width: 1200px; /* Максимальная ширина */
+    height: 1,332; /* Фиксированная высота для макета */
+}
+
+/* Левая сторона */
+/* Левая сторона */
+.left-side {
+    background-image: url('listya.jpg'); /* Замените на путь к вашему фоновому изображению */
+    background-size: cover;
+    background-position: center;
+    width: 40%; /* Ширина левой стороны */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем содержимое по вертикали */
+    align-items: center; /* Центрируем содержимое по горизонтали */
+    padding: 20px;
+    
+    /* --- ДОБАВЛЕНЫ ЭТИ ДВЕ СТРОКИ: --- */
+    position: relative; 
+    z-index: 1;
+    /* ---------------------------------- */
+    
+    color: #000000; /* Цвет текста на левой панели */
+    text-align: center;
+    border-radius: 20px; /* Скругленные углы левой стороны */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Тень для выделения */
+    margin: 15px 0 15px 15px; /* Отступы от краев контейнера */
+}
+.left-side::before {
+    content: ''; /* Обязательное свойство */
+    position: absolute; /* Позиционируем относительно .left-side */
+    
+    /* Размер и положение квадрата (занимает 80% места) */
+    width: 80%;
+    height: 85%;
+    top: 50%; /* Смещает квадрат на 50% вниз */
+    left: 50%; /* Смещает квадрат на 50% вправо */
+    transform: translate(-50%, -50%); /* Центрирует квадрат */
+    
+    /* Стиль */
+    background-color: rgba(255, 255, 255, 0.75); /* Белый цвет с прозрачностью 75% */
+    border-radius: 20px; /* Скругленные углы */
+    z-index: -1; /* ОЧЕНЬ ВАЖНО: Помещаем под содержимое left-side */
+}
+/* ------------------------------------------------------------------ */
+
+/* Стилизация изображения на левой стороне */
+.left-side .logo {
+    max-width: 60%;
+    height: auto;
+    margin-bottom: 120px; /* Отступ под логотипом */
+    
+}
+
+/* Тексты на левой стороне */
+.welcome-text {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Тень для читаемости */
+}
+
+.description-text {
+    font-size: 1em;
+    max-width: 80%;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Тень для читаемости */
+}
+
+
+/* Правая сторона */
+.right-side {
+    width: 623px; /* Ширина правой стороны */
+    height: 741px;
+    top: 260px
+    ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-form {
+    background-color: #fff; /* Фон формы белый */
+    padding: 40px;
+    border-radius: 15px; /* Скругленные углы формы */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Мягкая тень */
+    text-align: center;
+    width: 380px; /* Фиксированная ширина формы */
+    box-sizing: border-box; /* Учитываем padding в ширине */
+}
+
+.login-form h1 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.login-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Выравнивание элементов по левому краю */
+}
+
+.login-form label {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 8px;
+    display: block; /* Чтобы label был на отдельной строке */
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: none; /* Убираем стандартную рамку */
+    border-radius: 8px;
+    background-color: #f5f5f5; /* Светло-серый фон для полей ввода */
+    font-size: 1em;
+    color: #333;
+    box-sizing: border-box;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+    background-color: #eee; /* Чуть темнее при фокусе */
+    outline: none;
+    box-shadow: 0 0 0 2px #a3e635; /* Зеленая обводка при фокусе */
+}
+
+.forgot-password {
+    align-self: flex-end; /* Прижимаем к правому краю */
+    font-size: 0.85em;
+    color: #777;
+    text-decoration: none;
+    margin-bottom: 25px;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: #5d5d81; /* Темно-фиолетовый при наведении */
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #87CD2A; /* Зеленая кнопка */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px; /* Отступ от забыли пароль */
+}
+
+.login-btn:hover {
+    background-color: #6fb322; /* Темнее зеленая при наведении */
+    transform: translateY(-2px); /* Небольшой эффект при наведении */
+}
+
+/* Сообщение об ошибке/успехе */
+.error-message {
+    margin-top: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    min-height: 20px; /* Чтобы не скакало при появлении/исчезновении */
+}
+
+/* Переключатель языков */
+.language-selector {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 5px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.language-selector button {
+    background-color: transparent;
+    border: none;
+    color: #777;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.language-selector button.active {
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+}
+
+.language-selector button:hover:not(.active) {
+    background-color: #f0f0f0;
+}
+/* Стили для текста "Нет аккаунта?" */
+.register-text {
+    font-size: 0.9em; /* Маленький размер текста */
+    color: #666; /* Серый цвет для основного текста */
+    margin-top: 20px; /* Отступ сверху от кнопки "Войти" */
+    text-align: center; /* Центрируем, если форма шире */
+    width: 100%; /* Занимает всю ширину формы */
+}
+
+/* Стили для ссылки "Регистрация" */
+.register-link {
+    color: #5d5d81; /* Фиолетовый цвет для ссылки */
+    font-weight: bold; /* Жирный шрифт */
+    text-decoration: none; /* Убираем стандартное подчеркивание */
+    transition: color 0.2s;
+}
+
+.register-link:hover {
+    color: #87CD2A; /* Зеленый цвет при наведении */
+    text-decoration: underline; /* Добавляем подчеркивание при наведении */
+}

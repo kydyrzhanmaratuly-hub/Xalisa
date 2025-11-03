@@ -1,0 +1,426 @@
+/* Базовые стили и сброс */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f9;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* Шапка (Header) */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.header h1 {
+    font-size: 1.5em;
+    color: #5d5d81;
+    margin: 0;
+}
+
+/* НОВЫЕ СТИЛИ ДЛЯ НАВИГАЦИОННЫХ КВАДРАТНЫХ ССЫЛОК */
+.nav-links {
+    display: flex;
+    gap: 10px; /* Расстояние между кнопками */
+}
+
+.nav-button {
+    text-decoration: none;
+    background-color: #f4f7f9; /* Светлый фон по умолчанию */
+    color: #5d5d81; /* Фиолетовый текст */
+    border: 1px solid #e0e0ff; /* Светлая фиолетовая рамка */
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: bold;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    white-space: nowrap; /* Не переносить текст */
+    /* Имитация квадрата: padding делает их прямоугольными, но компактными */
+}
+
+.nav-button:hover {
+    background-color: #e0e0ff;
+    border-color: #5d5d81;
+}
+
+.nav-button.active {
+    background-color: #5d5d81; /* Активная кнопка - темный фиолетовый фон */
+    color: #fff;
+    border-color: #5d5d81;
+}
+/* КОНЕЦ НОВЫХ СТИЛЕЙ */
+
+
+/* Контейнер расписания */
+.schedule-container {
+    padding: 20px;
+}
+
+.date-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #5d5d81;
+}
+
+/* Сетка расписания */
+.grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr); 
+    grid-template-rows: auto 1fr; 
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Названия дней */
+.day-names {
+    grid-column: 2 / 9;
+    display: contents; 
+    text-align: center;
+    font-weight: bold;
+    color: #5d5d81;
+}
+
+.day {
+    padding: 10px 0; 
+    border-bottom: 2px solid #ddd;
+    border-right: 1px solid #eee;
+    /* --- ИЗМЕНЕНИЕ: УМЕНЬШАЕМ ШРИФТ, ЧТОБЫ ПОМЕСТИЛОСЬ --- */
+    font-size: 1.0em; /* Снизили с 1.1em до 1.0em (или 0.95em, если 1.0 не сработает) */
+    /* -------------------------------------------------------- */
+    
+    text-align: center; /* Гарантируем центрирование */
+    white-space: nowrap; /* Гарантируем, что текст не переносится */
+    overflow: hidden;
+}
+
+.day span {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #888;
+}
+
+.day:last-child {
+    border-right: none;
+}
+
+.current-day {
+    color: #5d5d81;
+}
+
+.weekend-day {
+    background-color: #fcfcfc;
+    color: #aaa;
+}
+
+/* Колонка времени */
+.time-column {
+    grid-row: 2;
+    padding-top: 5px;
+    border-right: 1px solid #eee;
+    text-align: right;
+    font-size: 0.9em;
+    color: #888;
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(15, 60px); 
+}
+
+.time-slot {
+    height: 60px;
+    line-height: 1px;
+    padding-right: 10px;
+    position: relative;
+}
+
+/* Сетка занятий (основная область) */
+.schedule-grid {
+    grid-column: 2 / 9;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); 
+    grid-template-rows: repeat(15, 60px); 
+    position: relative;
+    background-image: linear-gradient(to bottom, #eee 1px, transparent 1px);
+    background-size: 100% 60px; 
+    overflow: hidden; 
+}
+
+.schedule-grid > div {
+    border-right: 1px solid #eee;
+}
+
+.schedule-grid > div:last-child {
+    border-right: none;
+}
+
+/* Заливка для текущего дня (Вторник) */
+.current-day-overlay {
+    background-color: #f0f0ff; 
+    opacity: 0.5;
+    z-index: 5; 
+    pointer-events: none;
+}
+
+/* Блоки занятий */
+.class-block {
+    background-color: #e0e0ff; 
+    color: #5d5d81;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+    overflow: hidden;
+    position: relative;
+    z-index: 10; 
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.class-block small {
+    display: block;
+    font-weight: normal;
+    font-size: 0.75em;
+    margin-top: auto; 
+    color: #7b7b9e;
+}
+
+/* Ссылка на материалы сайта */
+.material-link {
+    display: block;
+    font-size: 0.75em;
+    color: #007bff; 
+    text-decoration: none;
+    margin-top: 5px;
+    font-weight: normal;
+}
+
+.material-link:hover {
+    text-decoration: underline;
+}
+
+/* Дополнительные стили для разных предметов */
+.math-class {
+    background-color: #e6ffe6; 
+    color: #4a904a;
+}
+.design-class {
+    background-color: #e0e0ff; 
+    color: #5d5d81;
+}
+.lang-class {
+    background-color: #fff0e0; 
+    color: #b3733a;
+}
+
+
+/* Стиль для выходных (Суббота/Воскресенье) */
+.weekend-block {
+    background-image: repeating-linear-gradient(-45deg, #f8f8f8, #f8f8f8 10px, #eee 10px, #eee 20px);
+    opacity: 0.7;
+    z-index: 5;
+    pointer-events: none;
+}
+/* --- СТИЛИ ДЛЯ ЛОГОТИПА --- */
+.logo-image {
+    /* Установите желаемые размеры */
+    width: 100px; /* Например, увеличить ширину до 100px */
+    height: auto; /* Сохранение пропорций */
+    max-height: 150px; /* Ограничение высоты, чтобы не "ломать" шапку */
+}
+/* -------------------------- */
+/* --- СТИЛИ ДЛЯ ТАБЕЛЯ УСПЕВАЕМОСТИ (В КОНЕЦ static.css) --- */
+
+.stats-container {
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.stats-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #5d5d81; /* Цвет шапки */
+}
+
+.stats-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Мягкая тень */
+    padding: 20px;
+}
+
+/* --- ОСНОВНАЯ ТАБЛИЦА --- */
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.grades-table thead th {
+    background-color: #f4f7f9; /* Светлый фон шапки таблицы */
+    color: #5d5d81;
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 15px 20px;
+    border-bottom: 2px solid #e0e0ff;
+}
+
+.grades-table tbody tr {
+    border-bottom: 1px solid #f0f0f5; /* Тонкий разделитель */
+    transition: background-color 0.2s;
+}
+
+.grades-table tbody tr:hover {
+    background-color: #fcfcff; /* Легкое выделение */
+}
+
+.grades-table td {
+    padding: 15px 20px;
+    font-size: 0.95em;
+    color: #333;
+}
+
+/* --- СТИЛИЗАЦИЯ ОЦЕНОК (ПОЛОСКИ) --- */
+.grade {
+    font-weight: 700;
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px 8px;
+    display: inline-block;
+}
+
+/* ЦВЕТОВОЕ КОДИРОВАНИЕ (В стиле Расписания) */
+.grade.A {
+    background-color: #e6ffe6; /* Светло-зеленый (как math-class) */
+    color: #4a904a;
+}
+.grade.B {
+    background-color: #fff0e0; /* Светло-оранжевый (как lang-class) */
+    color: #b3733a;
+}
+.grade.C {
+    background-color: #f0f0ff; /* Светло-фиолетовый/голубой */
+    color: #5d5d81;
+}
+.grade.D, .grade.F {
+    background-color: #ffcccc; /* Светло-красный (неуд.) */
+    color: #cc0000;
+}
+/* --- СТИЛИ ДЛЯ МОЕГО КАБИНЕТА --- */
+
+.cabinet-container {
+    padding: 20px 40px;
+    max-width: 800px; /* Кабинет делаем чуть уже */
+    margin: 20px auto;
+}
+
+.cabinet-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #5d5d81; 
+}
+
+.profile-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* --- Секция Заголовка Профиля (Иконка и Имя) --- */
+.profile-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f5;
+    padding-bottom: 20px;
+}
+
+.profile-icon {
+    font-size: 56px;
+    color: #5d5d81; /* Фиолетовый цвет иконки */
+    margin-right: 20px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 5px;
+}
+
+.user-status {
+    font-size: 14px;
+    color: #888;
+}
+
+/* --- Детали Профиля --- */
+.profile-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Две колонки для информации */
+    gap: 15px 30px; /* Отступы между строками и колонками */
+}
+
+.detail-item {
+    padding: 5px 0;
+}
+
+.detail-label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #5d5d81;
+    margin-bottom: 2px;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: #333;
+}
+
+/* --- Кнопка Настроек --- */
+.settings-btn {
+    align-self: flex-start; /* Выравнивание по левому краю */
+    background-color: #f4f7f9;
+    color: #5d5d81;
+    border: 1px solid #e0e0ff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.settings-btn:hover {
+    background-color: #e0e0ff;
+    color: #5d5d81;
+}
+
+.settings-btn i {
+    margin-right: 8px;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="Registration.css">
+</head>
+<body>
+  <div class="register-container">
+    <form class="register-form" id="registrationForm"> <h1>Регистрация</h1>
+
+        <label for="login">Логин</label>
+        <input type="text" id="login" placeholder="Введите логин" required>
+
+        <label for="password">Пароль</label>
+        <input type="password" id="password" placeholder="Введите пароль" required>
+
+        <div class="agreement">
+            <input type="checkbox" id="agree" required>
+            <label for="agree">Я согласен на обработку персональных данных</label>
+        </div>
+
+        <p id="registrationMessage" class="error-message"></p>
+        <button type="submit" class="register-btn">Зарегистрироваться</button>
+    </form>
+</div>
+</body>
+<script>
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Останавливаем стандартную отправку формы
+
+        const login = document.getElementById("login").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const agree = document.getElementById("agree").checked;
+        const messageElement = document.getElementById("registrationMessage");
+
+        // Сброс стилей
+        messageElement.textContent = "";
+        messageElement.style.color = "red";
+        messageElement.style.fontSize = "0.9em";
+
+        // --- 1. ПРОВЕРКА ПУСТЫХ ПОЛЕЙ ---
+        if (!login || !password) {
+            messageElement.textContent = "Сперва введите логин и пароль";
+            return;
+        }
+
+        // --- ПРОВЕРКА СОГЛАСИЯ (дополнительно) ---
+        if (!agree) {
+            messageElement.textContent = "Вы должны согласиться на обработку персональных данных";
+            return;
+        }
+
+        // --- 2. ИМИТАЦИЯ УСПЕШНОЙ РЕГИСТРАЦИИ ---
+        // 1. Сохраняем логин в localStorage для автозаполнения
+        localStorage.setItem('lastRegisteredLogin', login);
+
+        // 2. Выводим зеленое сообщение об успехе
+        messageElement.style.color = "green";
+        messageElement.textContent = "Регистрация успешно";
+
+        // 3. Перенаправление на страницу входа (fafa.html) через 2 секунды
+        setTimeout(() => {
+            window.location.href = "fafa.html";
+        }, 2000); 
+
+        // В реальном приложении здесь был бы AJAX запрос на сервер
+    });
+</script>
+</html>

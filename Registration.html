@@ -8,64 +8,165 @@
 </head>
 <body>
   <div class="register-container">
-    <form class="register-form" id="registrationForm"> <h1>Регистрация</h1>
+    <form class="register-form" id="registrationForm">
+        <h1 id="reg-title">Регистрация</h1>
 
-        <label for="login">Логин</label>
-        <input type="text" id="login" placeholder="Введите логин" required>
+        <label for="fullName" id="label-name">Полное имя</label>
+        <input type="text" id="fullName" placeholder="Например: Еркебулан Смаилов" required
+               data-placeholder-ru="Например: Еркебулан Смаилов" 
+               data-placeholder-kz="Мысалы: Еркебұлан Смаилов" 
+               data-placeholder-en="E.g.: Yerkebulan Smailov">
+        
+        <label for="login" id="label-login">Логин</label>
+        <input type="text" id="login" placeholder="Введите логин" required
+               data-placeholder-ru="Введите логин" 
+               data-placeholder-kz="Логинді енгізіңіз" 
+               data-placeholder-en="Enter login">
 
-        <label for="password">Пароль</label>
-        <input type="password" id="password" placeholder="Введите пароль" required>
-
+        <label for="password" id="label-password">Пароль</label>
+        <input type="password" id="password" placeholder="Введите пароль" required
+               data-placeholder-ru="Введите пароль" 
+               data-placeholder-kz="Құпия сөзді енгізіңіз" 
+               data-placeholder-en="Enter password">
+               
+        <label for="email" id="label-email">Email</label>
+        <input type="email" id="email" placeholder="Ваша почта" required
+               data-placeholder-ru="Ваша почта" 
+               data-placeholder-kz="Электрондық поштаңыз" 
+               data-placeholder-en="Your email">
+               
+        <label for="group" id="label-group">Группа</label>
+        <input type="text" id="group" placeholder="Например: ИС-204" required
+               data-placeholder-ru="Например: ИС-204" 
+               data-placeholder-kz="Мысалы: АТ-201" 
+               data-placeholder-en="E.g.: IS-204">
+               
+        <label for="course" id="label-course">Курс</label>
+        <input type="number" id="course" placeholder="Например: 3" required min="1" max="5"
+               data-placeholder-ru="Например: 3" 
+               data-placeholder-kz="Мысалы: 3" 
+               data-placeholder-en="E.g.: 3">
+        
         <div class="agreement">
             <input type="checkbox" id="agree" required>
-            <label for="agree">Я согласен на обработку персональных данных</label>
+            <label for="agree" id="label-agree">Я согласен на обработку персональных данных</label>
         </div>
 
         <p id="registrationMessage" class="error-message"></p>
-        <button type="submit" class="register-btn">Зарегистрироваться</button>
+        <button type="submit" class="register-btn" id="register-button">Зарегистрироваться</button>
     </form>
 </div>
-</body>
-<script>
-    document.getElementById("registrationForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Останавливаем стандартную отправку формы
 
+<script>
+    // --- ЛОКАЛИЗАЦИЯ ---
+    const translations = {
+        'KZ': {
+            'reg-title': 'Тіркелу',
+            'label-name': 'Толық аты-жөні',
+            'label-login': 'Логин',
+            'label-password': 'Құпия сөз',
+            'label-email': 'Электрондық пошта',
+            'label-group': 'Топ',
+            'label-course': 'Курс',
+            'label-agree': 'Мен дербес деректерді өңдеуге келісемін',
+            'register-button': 'Тіркелу',
+        },
+        'RU': {
+            'reg-title': 'Регистрация',
+            'label-name': 'Полное имя',
+            'label-login': 'Логин',
+            'label-password': 'Пароль',
+            'label-email': 'Email',
+            'label-group': 'Группа',
+            'label-course': 'Курс',
+            'label-agree': 'Я согласен на обработку персональных данных',
+            'register-button': 'Зарегистрироваться',
+        },
+        'EN': {
+            'reg-title': 'Registration',
+            'label-name': 'Full Name',
+            'label-login': 'Login',
+            'label-password': 'Password',
+            'label-email': 'Email',
+            'label-group': 'Group',
+            'label-course': 'Course',
+            'label-agree': 'I agree to the processing of personal data',
+            'register-button': 'Register',
+        }
+    };
+
+    function setLanguage(lang) {
+        localStorage.setItem('selectedLang', lang);
+        const langData = translations[lang];
+
+        for (const id in langData) {
+            const element = document.getElementById(id);
+            if (element) {
+                if (element.tagName === 'INPUT') {
+                    const placeholderKey = `data-placeholder-${lang.toLowerCase()}`;
+                    element.placeholder = element.getAttribute(placeholderKey);
+                } else if (element.tagName === 'BUTTON') {
+                    element.textContent = langData[id];
+                } else {
+                    element.textContent = langData[id];
+                }
+            }
+        }
+        document.title = langData['reg-title'];
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLang = localStorage.getItem('selectedLang') || 'RU';
+        setLanguage(savedLang);
+    });
+
+    // --- СЕРВЕРНАЯ РЕГИСТРАЦИЯ ---
+    document.getElementById("registrationForm").addEventListener("submit", async function(event) {
+        event.preventDefault(); 
+
+        const name = document.getElementById("fullName").value.trim();
         const login = document.getElementById("login").value.trim();
         const password = document.getElementById("password").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const group = document.getElementById("group").value.trim();
+        const course = document.getElementById("course").value.trim();
         const agree = document.getElementById("agree").checked;
         const messageElement = document.getElementById("registrationMessage");
 
-        // Сброс стилей
         messageElement.textContent = "";
         messageElement.style.color = "red";
-        messageElement.style.fontSize = "0.9em";
 
-        // --- 1. ПРОВЕРКА ПУСТЫХ ПОЛЕЙ ---
-        if (!login || !password) {
-            messageElement.textContent = "Сперва введите логин и пароль";
+        if (!name || !login || !password || !email || !group || !course || !agree) {
+            messageElement.textContent = "Пожалуйста, заполните все поля и согласитесь с условиями.";
             return;
         }
+        
+        try {
+            const response = await fetch("http://localhost:3000/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, login, password, email, group, course: parseInt(course) })
+            });
 
-        // --- ПРОВЕРКА СОГЛАСИЯ (дополнительно) ---
-        if (!agree) {
-            messageElement.textContent = "Вы должны согласиться на обработку персональных данных";
-            return;
+            const data = await response.json();
+
+            if (response.ok) {
+                messageElement.style.color = "green";
+                messageElement.textContent = data.message; 
+                
+                setTimeout(() => {
+                    window.location.href = "fafa.html"; 
+                }, 2000); 
+
+            } else {
+                messageElement.textContent = data.message || "Ошибка при регистрации.";
+            }
+        } catch (error) {
+            messageElement.textContent = "Ошибка подключения к серверу. Проверьте server.js."; 
+            console.error("Fetch error:", error);
         }
-
-        // --- 2. ИМИТАЦИЯ УСПЕШНОЙ РЕГИСТРАЦИИ ---
-        // 1. Сохраняем логин в localStorage для автозаполнения
-        localStorage.setItem('lastRegisteredLogin', login);
-
-        // 2. Выводим зеленое сообщение об успехе
-        messageElement.style.color = "green";
-        messageElement.textContent = "Регистрация успешно";
-
-        // 3. Перенаправление на страницу входа (fafa.html) через 2 секунды
-        setTimeout(() => {
-            window.location.href = "fafa.html";
-        }, 2000); 
-
-        // В реальном приложении здесь был бы AJAX запрос на сервер
     });
+
 </script>
+</body>
 </html>

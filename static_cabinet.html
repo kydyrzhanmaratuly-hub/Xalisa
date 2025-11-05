@@ -26,27 +26,27 @@
             <div class="profile-header">
                 <i class="fas fa-user-circle profile-icon"></i>
                 <div class="user-info">
-                    <div class="user-name">Еркебулан Смаилов</div>
-                    <div class="user-status">Студент | Группа ИС-204</div>
+                    <div class="user-name" id="cabinet-user-name">Еркебулан Смаилов</div>
+                    <div class="user-status" id="cabinet-user-status">Студент | Группа ИС-204</div>
                 </div>
             </div>
 
             <div class="profile-details">
                 <div class="detail-item">
                     <span class="detail-label">Логин:</span>
-                    <span class="detail-value">Yerkebulan</span>
+                    <span class="detail-value" id="cabinet-login">Yerkebulan</span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Email:</span>
-                    <span class="detail-value">e.smailov@kini.kz</span>
+                    <span class="detail-value" id="cabinet-email">e.smailov@kini.kz</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Телефон:</span>
-                    <span class="detail-value">+7 705 XXX XX XX</span>
+                    <span class="detail-label">Группа:</span>
+                    <span class="detail-value" id="cabinet-group">ИС-204</span>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Курс обучения:</span>
-                    <span class="detail-value">3 (Осенний семестр)</span>
+                    <span class="detail-value" id="cabinet-course">3 (Осенний семестр)</span>
                 </div>
             </div>
             
@@ -57,5 +57,33 @@
         </div>
     </div>
     
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const userDataString = localStorage.getItem('userData');
+        
+        if (!userDataString) {
+            // Если данных нет, перенаправляем на страницу входа
+            console.warn("Данные пользователя не найдены. Перенаправление на вход.");
+            window.location.href = "fafa.html";
+            return;
+        }
+
+        try {
+            const user = JSON.parse(userDataString);
+
+            // Заполнение данных в личном кабинете
+            document.getElementById('cabinet-user-name').textContent = user.name || 'Студент';
+            document.getElementById('cabinet-user-status').textContent = `Студент | Группа ${user.group || 'N/A'} (Курс ${user.course || 'N/A'})`;
+            document.getElementById('cabinet-login').textContent = user.login || 'N/A';
+            document.getElementById('cabinet-email').textContent = user.email || 'N/A';
+            document.getElementById('cabinet-group').textContent = user.group || 'N/A';
+            document.getElementById('cabinet-course').textContent = `${user.course || 'N/A'} (Осенний семестр)`;
+        } catch (e) {
+            console.error("Ошибка парсинга данных пользователя:", e);
+            alert("Ошибка загрузки данных профиля. Повторите вход.");
+            window.location.href = "fafa.html";
+        }
+    });
+</script>
 </body>
 </html>

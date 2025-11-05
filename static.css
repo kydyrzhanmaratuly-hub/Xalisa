@@ -59,7 +59,12 @@ body {
 
 /* Контейнер расписания */
 .schedule-container {
+    max-width: 1200px;
+    margin: 40px auto;
     padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .date-header {
@@ -75,12 +80,13 @@ body {
 /* Сетка расписания */
 .grid {
     display: grid;
-    grid-template-columns: 80px repeat(7, 1fr); 
-    grid-template-rows: auto 1fr; 
-    background-color: #fff;
+    /* 1. Колонка времени (80px) + 5 колонок дней (1fr) */
+    grid-template-columns: 80px repeat(5, 1fr); 
+    /* 1. Строка для заголовков дней (40px) + 65 строк для 15-мин интервалов (7:00 до 23:15) */
+    grid-template-rows: 40px repeat(65, minmax(20px, auto)); 
     border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+    position: relative; 
 }
 
 /* Названия дней */
@@ -93,16 +99,14 @@ body {
 }
 
 .day {
-    padding: 10px 0; 
+    padding: 10px 5px; /* Уменьшил горизонтальный padding */
     border-bottom: 2px solid #ddd;
     border-right: 1px solid #eee;
-    /* --- ИЗМЕНЕНИЕ: УМЕНЬШАЕМ ШРИФТ, ЧТОБЫ ПОМЕСТИЛОСЬ --- */
-    font-size: 1.0em; /* Снизили с 1.1em до 1.0em (или 0.95em, если 1.0 не сработает) */
-    /* -------------------------------------------------------- */
-    
-    text-align: center; /* Гарантируем центрирование */
-    white-space: nowrap; /* Гарантируем, что текст не переносится */
-    overflow: hidden;
+    font-size: 0.85em; /* Уменьшил размер шрифта */
+    text-align: center;
+    white-space: normal; /* ИЗМЕНИЛ: разрешаем перенос */
+    overflow: visible; /* ИЗМЕНИЛ */
+    word-wrap: break-word; /* Добавил */
 }
 
 .day span {
@@ -126,28 +130,28 @@ body {
 
 /* Колонка времени */
 .time-column {
-    grid-row: 2;
-    padding-top: 5px;
-    border-right: 1px solid #eee;
-    text-align: right;
-    font-size: 0.9em;
-    color: #888;
-    position: relative;
-    display: grid;
-    grid-template-rows: repeat(15, 60px); 
+    grid-column: 1; 
+    /* 💡 ИСПРАВЛЕНИЕ: Начинаем со 2-й строки (после заголовков дней) */
+    grid-row: 2 / span 65; 
+    border-right: 1px solid #ddd;
+    padding-top: 5px; 
+    z-index: 5;
+    background-color: #f7f7f7;
 }
 
 .time-slot {
-    height: 60px;
-    line-height: 1px;
-    padding-right: 10px;
-    position: relative;
+    height: 80px; /* 4 * 20px (4 слота по 15 мин) */
+    line-height: 80px;
+    text-align: right;
+    padding-right: 5px;
+    color: #888;
+    font-size: 0.9em;
+    font-weight: 500;
 }
-
 /* Сетка занятий (основная область) */
 .schedule-grid {
     grid-column: 2 / 9;
-    grid-row: 2;
+    grid-row: 2; /* ИЗМЕНИЛ: было grid-row: 2, теперь просто 2 */
     display: grid;
     grid-template-columns: repeat(7, 1fr); 
     grid-template-rows: repeat(15, 60px); 
@@ -175,17 +179,17 @@ body {
 
 /* Блоки занятий */
 .class-block {
-    background-color: #e0e0ff; 
-    color: #5d5d81;
-    border-radius: 5px;
-    padding: 8px;
-    margin: 5px;
-    font-size: 0.9em;
-    font-weight: bold;
-    overflow: hidden;
     position: relative;
-    z-index: 10; 
+    padding: 5px 8px;
+    margin: 1px; /* Небольшой отступ между блоками */
+    border-radius: 6px;
+    font-size: 0.85em;
+    overflow: hidden;
+    color: white;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    
+    /* Дополнительные стили, чтобы текст правильно отображался */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -423,4 +427,32 @@ body {
 
 .settings-btn i {
     margin-right: 8px;
+}
+.grid > .day {
+    grid-row: 1; /* Все заголовки дней должны быть на первой строке */
+    text-align: center;
+    padding: 10px 5px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #eee;
+    background-color: #f4f7f9;
+    color: #5d5d81;
+    z-index: 10;
+}
+.grid > .day.current-day {
+    background-color: #e0f2f1; /* Светлый акцент для текущего дня */
+    color: #00897b;
+}
+.math-class { background-color: #ef4444; } /* Красный */
+.lang-class { background-color: #f97316; } /* Оранжевый */
+.code-class { background-color: #10b981; } /* Зеленый */
+.science-class { background-color: #06b6d4; } /* Голубой */
+.design-class { background-color: #8b5cf6; } /* Фиолетовый */
+
+.current-day-overlay {
+    background-color: rgba(255, 255, 0, 0.05); 
+    position: absolute;
+    /* 💡 ИСПРАВЛЕНИЕ: Не должен перекрывать заголовок дня (Row 1) */
+    grid-row: 2 / span 65; 
+    z-index: 1; /* Под блоками занятий */
 }

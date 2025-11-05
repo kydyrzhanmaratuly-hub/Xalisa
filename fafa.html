@@ -16,8 +16,8 @@
     <div class="container">
         <div class="left-side">
     <img src="Kini German.png" alt="Logo" class="logo"> 
-    <p class="welcome-text">Добро пожаловать!</p>
-    <p class="description-text">Ваш образовательный портал для современного обучения</p>
+    <p class="welcome-text" id="welcome-text-id">Добро пожаловать!</p>
+    <p class="description-text" id="description-text-id">Ваш образовательный портал для современного обучения</p>
 </div>
 
         <div class="right-side">
@@ -42,23 +42,115 @@
         </form>
     </div>
 </div>
+    </div>
 
-    <script>
+<script>
+    const translations = {
+        'RU': {
+            'header-title': 'Вход в систему',
+            'welcome-text-id': 'Добро пожаловать!',
+            'description-text-id': 'Ваш образовательный портал для современного обучения',
+            'label-login': 'Логин',
+            'label-password': 'Пароль',
+            'forgot-link': 'Забыли пароль?',
+            'login-button': 'Войти',
+            'register-prompt_prefix': 'Нет аккаунта?',
+            'register-link-text': 'Регистрация',
+            'error-empty': 'Сперва введите свой логин и пароль',
+            'error-conn': 'Ошибка подключения к серверу. Убедитесь, что сервер запущен.',
+            'auth-success': 'Авторизация прошла успешно',
+        },
+        'KZ': {
+            'header-title': 'Жүйеге кіру',
+            'welcome-text-id': 'Қош келдіңіз!',
+            'description-text-id': 'Заманауи білім беруге арналған білім беру порталыңыз',
+            'label-login': 'Логин',
+            'label-password': 'Құпия сөз',
+            'forgot-link': 'Құпия сөзді ұмыттыңыз ба?',
+            'login-button': 'Кіру',
+            'register-prompt_prefix': 'Аккаунт жоқ па?',
+            'register-link-text': 'Тіркелу',
+            'error-empty': 'Алдымен логин мен құпия сөзіңізді енгізіңіз',
+            'error-conn': 'Серверге қосылу қатесі. Сервердің іске қосылғанына көз жеткізіңіз.',
+            'auth-success': 'Авторизация сәтті өтті',
+        },
+        'EN': {
+            'header-title': 'System Login',
+            'welcome-text-id': 'Welcome!',
+            'description-text-id': 'Your educational portal for modern learning',
+            'label-login': 'Login',
+            'label-password': 'Password',
+            'forgot-link': 'Forgot password?',
+            'login-button': 'Login',
+            'register-prompt_prefix': 'No account?',
+            'register-link-text': 'Registration',
+            'error-empty': 'First enter your login and password',
+            'error-conn': 'Server connection error. Ensure the server is running.',
+            'auth-success': 'Authorization successful',
+        }
+    };
+
+    let currentLang = localStorage.getItem('currentLanguage') || 'RU';
+
+    /**
+     * Функция переключения языка
+     */
+    function setLanguage(lang) {
+        // Установка активной кнопки
+        document.querySelectorAll('.language-selector button').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang) {
+                btn.classList.add('active');
+            }
+        });
+
+        currentLang = lang;
+        const t = translations[lang];
+
+        // Обновление статических текстов (по ID)
+        document.getElementById('header-title').textContent = t['header-title'];
+        document.getElementById('welcome-text-id').textContent = t['welcome-text-id'];
+        document.getElementById('description-text-id').textContent = t['description-text-id'];
+        document.getElementById('label-login').textContent = t['label-login'];
+        document.getElementById('label-password').textContent = t['label-password'];
+        document.getElementById('forgot-link').textContent = t['forgot-link'];
+        document.getElementById('login-button').textContent = t['login-button'];
+        
+        // Обновление текста с внутренней ссылкой
+        document.getElementById('register-prompt').innerHTML = `${t['register-prompt_prefix']} <a href="Registration.html" class="register-link" id="register-link-text">${t['register-link-text']}</a>`;
+        
+        // Обновление placeholder'ов (используя data-атрибуты)
+        const langCode = lang.toLowerCase();
+        document.getElementById('login').placeholder = document.getElementById('login').getAttribute(`data-placeholder-${langCode}`);
+        document.getElementById('password').placeholder = document.getElementById('password').getAttribute(`data-placeholder-${langCode}`);
+
+        // Сохранение предпочтения
+        localStorage.setItem('currentLanguage', lang);
+    }
+
+    // Инициализация языка при загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+        setLanguage(currentLang);
+    });
+    
+    // =========================================================
+    // ЛОГИКА ВХОДА
+    // =========================================================
     document.getElementById("loginForm").addEventListener("submit", async function(event) {
         event.preventDefault();
 
         const login = document.getElementById("login").value.trim();
         const password = document.getElementById("password").value.trim();
         const errorMessage = document.getElementById("errorMessage");
+        const t = translations[currentLang]; // Получаем переводы для текущего языка
 
-        // 1. Сброс сообщений и установка стиля ошибки по умолчанию
+        // 1. Сброс сообщений
         errorMessage.textContent = ""; 
         errorMessage.style.fontSize = "0.9em";
         errorMessage.style.color = "red"; 
 
-        // 2. Проверка: "Сперва введите свой логин и пароль"
         if (!login || !password) {
-            errorMessage.textContent = "Сперва введите свой логин и пароль";
+            errorMessage.textContent = t['error-empty']; // Переведенное сообщение
             return;
         }
 
@@ -66,7 +158,15 @@
         if (login === "Yerkebulan" && password === "12345") {
             // УСПЕШНЫЙ ВХОД
             errorMessage.style.color = "green";
-            errorMessage.textContent = "Авторизация прошла успешно";
+            errorMessage.textContent = t['auth-success']; // Переведенное сообщение
+            
+            // Сохраняем тестовые данные пользователя
+            localStorage.setItem('userData', JSON.stringify({
+                login: "Yerkebulan",
+                name: "Еркебулан",
+                group: "ИС-204", 
+                course: 2
+            }));
             
             // Перенаправление на static.html через 1 секунду
             setTimeout(() => {
@@ -76,7 +176,7 @@
         }
         // ---------------------------------------------------------------
         
-        // 3. Запрос к реальному серверу (если он не Yerkebulan/12345)
+        // 3. Запрос к реальному серверу
         try {
             const response = await fetch("http://localhost:3000/login", {
                 method: "POST",
@@ -85,62 +185,28 @@
             });
 
             if (response.ok) {
-                // Если сервер вернул успех для других данных (если поддерживается)
+                const result = await response.json(); 
+                
+                // Сохраняем реальные данные пользователя, включая группу
+                localStorage.setItem('userData', JSON.stringify(result.user));
+                
+                // Если сервер вернул успех 
                 errorMessage.style.color = "green";
-                errorMessage.textContent = "Авторизация прошла успешно";
+                errorMessage.textContent = t['auth-success']; // Переведенное сообщение
                 setTimeout(() => {
                     window.location.href = "static.html"; 
                 }, 1000);
             } else {
-                // 4. Сообщение: "Неверный логин и пароль" (от сервера)
-                errorMessage.textContent = "Неверный логин и пароль";
+                // Сообщение: "Неверный логин и пароль" (от сервера)
+                const result = await response.json();
+                errorMessage.textContent = result.message || "Неверный логин или пароль";
             }
         } catch (error) {
             // Ошибка, если сервер недоступен
-            errorMessage.textContent = "Ошибка подключения к серверу. Попробуйте позже.";
+            errorMessage.textContent = t['error-conn']; // Переведенное сообщение
             console.error("Fetch error:", error);
         }
     });
 </script>
-<script>
-    document.getElementById("registrationForm").addEventListener("submit", function(event) {
-        event.preventDefault(); // Останавливаем стандартную отправку формы
-
-        const login = document.getElementById("login").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const agree = document.getElementById("agree").checked;
-        const messageElement = document.getElementById("registrationMessage");
-
-        // Сброс стилей
-        messageElement.textContent = "";
-        messageElement.style.color = "red";
-        messageElement.style.fontSize = "0.9em";
-
-        // --- 1. ПРОВЕРКА ПУСТЫХ ПОЛЕЙ ---
-        if (!login || !password) {
-            messageElement.textContent = "Сперва введите логин и пароль";
-            return;
-        }
-
-        // --- ПРОВЕРКА СОГЛАСИЯ (дополнительно) ---
-        if (!agree) {
-            messageElement.textContent = "Вы должны согласиться на обработку персональных данных";
-            return;
-        }
-
-        // --- 2. ИМИТАЦИЯ УСПЕШНОЙ РЕГИСТРАЦИИ ---
-        // 1. Сохраняем логин в localStorage для автозаполнения
-        localStorage.setItem('lastRegisteredLogin', login);
-
-        // 2. Выводим зеленое сообщение об успехе
-        messageElement.style.color = "green";
-        messageElement.textContent = "Регистрация успешно";
-
-        // 3. Перенаправление на страницу входа (fafa.html) через 2 секунды
-        setTimeout(() => {
-            window.location.href = "fafa.html";
-        }, 2000); 
-
-        // В реальном приложении здесь был бы AJAX запрос на сервер
-    });
-</script>
+</body>
+</html>

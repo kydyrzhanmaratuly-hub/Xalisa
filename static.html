@@ -5,85 +5,449 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мое Расписание MyStat</title>
     <link rel="stylesheet" href="static.css">
+    <style>
+        .math-class { background-color: #fef3c7; border-color: #f59e0b; border-left: 5px solid; }
+        .prog-class { background-color: #d1fae5; border-color: #10b981; border-left: 5px solid; }
+        .science-class { background-color: #e0f2fe; border-color: #3b82f6; border-left: 5px solid; }
+        .lang-class { background-color: #ede9fe; border-color: #8b5cf6; border-left: 5px solid; }
+        .design-class { background-color: #ffe4e6; border-color: #f43f5e; border-left: 5px solid; }
+
+        .class-block {
+            padding: 8px;
+            border-radius: 6px;
+            margin: 1px 2px; /* Уменьшаем вертикальный отступ */
+            font-size: 12px;
+            line-height: 1.3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 10; 
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .class-block span {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.9em;
+        }
+        .class-block small {
+            color: #6b7280;
+            font-size: 0.75em;
+        }
+        .material-link {
+            font-size: 0.75em;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        /* АДАПТАЦИЯ ПОД 15-МИНУТНЫЕ СЛОТЫ (44 интервала * 15px) */
+        .schedule-grid {
+            grid-column: 2 / 9;
+            grid-row: 2;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr); 
+            /* 44 слота по 15 минут (с 7:00 до 18:00) */
+            grid-template-rows: repeat(44, 15px); 
+            position: relative;
+            /* Линии сетки каждые 15 минут */
+            background-image: linear-gradient(to bottom, #eee 1px, transparent 1px);
+            background-size: 100% 15px; 
+            overflow: hidden;
+        }
+
+        .time-column {
+            grid-template-rows: repeat(44, 15px); 
+        }
+        
+        /* На 7:00, 8:00 и т.д. будет отображаться время */
+        .time-slot {
+            height: 15px; 
+            line-height: 15px;
+            text-align: right;
+            padding-right: 10px;
+            font-size: 0.8em;
+            color: #888;
+            border-bottom: 1px solid #f0f0f0;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
       <img src="Kini German.png" alt="Логотип" class="logo-image">
         <div class="nav-links">
-    <a href="static_cabinet.html" class="nav-button">Мой кабинет</a>
-    <a href="static_grades.html" class="nav-button">Табель успеваемости</a>
-    <a href="statics.html" class="nav-button active">Расписание</a>
-</div>
+            <a href="static_cabinet.html" class="nav-button">Мой кабинет</a>
+            <a href="static_grades.html" class="nav-button">Табель успеваемости</a>
+            <a href="static.html" class="nav-button active">Расписание</a>
+        </div>
     </div>
     
     <div class="schedule-container">
+        
+        <h2 id="scheduleTitle" style="margin-bottom: 10px;">Загрузка расписания...</h2>
+        <p id="scheduleMessage" style="color: red; font-weight: bold; margin: 20px 0;"></p>
+        
         <div class="date-header">
             &lt; Октябрь 2025
             <span class="view-control">&gt;</span>
         </div>
         
         <div class="grid">
-            <div class="time-column">
-                <div class="time-slot">7:00</div>
-                <div class="time-slot">8:00</div>
-                <div class="time-slot">9:00</div>
-                <div class="time-slot">10:00</div>
-                <div class="time-slot">11:00</div>
-                <div class="time-slot">12:00</div>
-                <div class="time-slot">13:00</div>
-                <div class="time-slot">14:00</div>
-                <div class="time-slot">15:00</div>
-                <div class="time-slot">16:00</div>
-                <div class="time-slot">17:00</div>
-                <div class="time-slot">18:00</div>
-                <div class="time-slot">19:00</div>
-                <div class="time-slot">20:00</div>
-                <div class="time-slot">21:00</div>
-            </div>
+            <div class="time-column" id="timeColumn">
+                </div>
 
             <div class="day-names">
-                <div class="day">13<br><span>Понедельник</span></div>
-                <div class="day current-day">14<br><span>Вторник</span></div>
-                <div class="day">15<br><span>Среда</span></div>
-                <div class="day">16<br><span>Четверг</span></div>
-                <div class="day">17<br><span>Пятница</span></div>
-                <div class="day weekend-day">18<br><span>Суббота</span></div>
-                <div class="day weekend-day">19<br><span>Воскресенье</span></div>
+                <div class="day"><br><span></span></div>
+                <div class="day current-day">20<br><span>Понедельник</span></div>
+                <div class="day">21<br><span>Вторник</span></div>
+                <div class="day">22<br><span>Среда</span></div>
+                <div class="day">23<br><span>Четверг</span></div>
+                <div class="day ">24<br><span>Пятница</span></div>
+                <div class="day weekend-day">25<br><span>Суббота</span></div>
+                <div class="day weekend-day">26<br><span>Воскресенье</span></div>
             </div>
 
-            <div class="schedule-grid">
-                
-                <div class="class-block math-class" style="grid-column: 1; grid-row: 3 / span 2;">
-                    <span>Высшая математика</span>
-                    <a href="#" class="material-link">Материалы сайта</a>
-                    <small>9:00 - 11:00 | 404</small>
+            <div class="schedule-grid" id="scheduleGrid">
                 </div>
-                
-                <div class="current-day-overlay" style="grid-column: 2; grid-row: 1 / span 15;"></div>
-
-                
-                <div class="class-block design-class" style="grid-column: 3; grid-row: 14 / span 2;">
-                    <span>Креативное мышление</span>
-                    <a href="#" class="material-link">Материалы сайта</a>
-                    <small>20:00 - 21:20 | 301</small>
-                </div>
-
-                <div class="class-block lang-class" style="grid-column: 4; grid-row: 4 / span 2;">
-                    <span>Английский язык (Практ.)</span>
-                    <a href="#" class="material-link">Материалы сайта</a>
-                    <small>10:00 - 12:00 | 205</small>
-                </div>
-
-                
-                <div class="class-block design-class" style="grid-column: 5; grid-row: 14 / span 2;">
-                    <span>Креативное мышление</span>
-                    <a href="#" class="material-link">Материалы сайта</a>
-                    <small>20:00 - 21:20 | 301</small>
-                </div>
-
-                <div class="weekend-block" style="grid-column: 6 / span 2; grid-row: 1 / span 15;"></div>
-            </div>
         </div>
     </div>
+    
+<script>
+    // Карта для сопоставления дней недели с колонками CSS Grid (Понедельник = 1)
+    const dayMap = {
+        'Понедельник': 1, 'Вторник': 2, 'Среда': 3, 'Четверг': 4, 'Пятница': 5
+    };
+
+    /**
+     * Вычисляет индекс строки в CSS Grid на основе времени, используя 15-минутные слоты.
+     * @param {string} time - Время в формате "HH:MM"
+     * @param {string[]} timeSlots - Массив временных слотов, пришедших с сервера
+     * @returns {number|null} Индекс строки в Grid (начиная с 1)
+     */
+    function getTimeSlotIndex(time, timeSlots) {
+        // Находим индекс времени в массиве (0 для 7:00, 1 для 7:15 и т.д.)
+        const index = timeSlots.findIndex(slot => slot === time);
+        // Индексы строк в schedule-grid начинаются с 1
+        return index !== -1 ? index + 1 : null; 
+    }
+    
+    /**
+     * Основная функция для рендеринга расписания.
+     * @param {Object[]} scheduleItems - Массив предметов.
+     * @param {string[]} timeSlots - Массив временных слотов (15-минутных) с сервера.
+     */
+    function renderSchedule(scheduleItems, timeSlots, userGroup) {
+        const timeColumn = document.getElementById('timeColumn');
+        const grid = document.getElementById('scheduleGrid');
+        
+        timeColumn.innerHTML = '';
+        grid.innerHTML = '';
+
+        // 1. Создаем временные слоты в time-column
+        timeSlots.forEach((slot, index) => {
+            // Игнорируем последний слот 18:00, т.к. он обозначает конец последнего часа
+            if (index >= timeSlots.length - 1) return;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'time-slot';
+            
+            // Отображаем время только для полных часов (7:00, 8:00 и т.д.)
+            if (slot.endsWith(':00')) {
+                 timeDiv.textContent = slot;
+            } else {
+                 timeDiv.textContent = '';
+            }
+            timeColumn.appendChild(timeDiv); 
+        });
+        
+        // 2. Добавляем ячейки с предметами
+        scheduleItems.forEach(item => {
+            const startRow = getTimeSlotIndex(item.start, timeSlots);
+            const endRow = getTimeSlotIndex(item.end, timeSlots);
+            const col = dayMap[item.day];
+
+            // Проверяем, что предмет находится в пределах сетки
+            if (startRow !== null && endRow !== null && col && endRow <= timeSlots.length) {
+                const block = document.createElement('div');
+                block.className = `class-block ${item.type}`;
+                block.style.gridColumn = col;
+                // Span = конечная строка - начальная строка. Каждая строка = 15 мин.
+                block.style.gridRow = `${startRow} / span ${endRow - startRow}`; 
+                
+                block.innerHTML = `
+                    <span>${item.subject}</span>
+                    <a href="#" class="material-link">Материалы сайта</a>
+                    <small>${item.start} - ${item.end} | ${item.room}</small>
+                `;
+                grid.appendChild(block);
+            }
+        });
+        
+        // 3. Добавляем блоки для выходных и оверлей текущего дня
+        const numRows = timeSlots.length; 
+        
+        const weekendBlock = document.createElement('div');
+        weekendBlock.className = 'weekend-block';
+        weekendBlock.style.gridColumn = '6 / span 2'; // Суббота (6) и Воскресенье (7)
+        weekendBlock.style.gridRow = `1 / ${numRows}`; 
+        grid.appendChild(weekendBlock);
+        
+        const currentDayOverlay = document.createElement('div');
+        currentDayOverlay.className = 'current-day-overlay';
+        currentDayOverlay.style.gridColumn = '1'; // Понедельник
+        currentDayOverlay.style.gridRow = `1 / ${numRows}`;
+        grid.appendChild(currentDayOverlay);
+    }
+
+    /**
+     * Загрузка расписания с сервера (server.js)
+     */
+    async function loadSchedule() {
+        const messageElement = document.getElementById('scheduleMessage');
+        const titleElement = document.getElementById('scheduleTitle');
+        const userDataString = localStorage.getItem('userData');
+        
+        let userGroup = null;
+        
+        if (userDataString) {
+            try {
+                const userData = JSON.parse(userDataString);
+                userGroup = userData.group;
+            } catch (e) {
+                console.error("Ошибка парсинга userData из localStorage:", e);
+            }
+        }
+        
+        // 💡 Логика для тестового режима (если не вошли, но логин Yerkebulan)
+        if (!userGroup && localStorage.getItem('login') === "Yerkebulan") { 
+            userGroup = 'ИС-204'; // Устанавливаем группу по умолчанию для теста
+        } 
+        
+        if (!userGroup) {
+            titleElement.textContent = "Расписание";
+            messageElement.textContent = "Ошибка: Данные о вашей группе не найдены. Войдите снова.";
+            return;
+        }
+
+        titleElement.textContent = `Загрузка расписания для группы ${userGroup}...`;
+        messageElement.textContent = "";
+
+        const apiUrl = `http://localhost:3000/api/schedule/${encodeURIComponent(userGroup)}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Обработка 404 (Расписание не найдено) или других ошибок сервера
+                throw new Error(data.message || `Ошибка HTTP: ${response.status} при загрузке расписания`);
+            }
+
+            // Успех
+            titleElement.textContent = `Расписание`;
+            renderSchedule(data.schedule, data.timeSlots, userGroup);
+
+        } catch (error) {
+            titleElement.textContent = "Расписание";
+            messageElement.textContent = `Ошибка: ${error.message}`;
+            console.error(error);
+        }
+    }
+
+    // Запускаем загрузку расписания при полной загрузке страницы
+    document.addEventListener('DOMContentLoaded', loadSchedule);
+</script>
 </body>
 </html>
+<!-- 📅 Кнопка для открытия календаря -->
+<div class="calendar-toggle">
+  <button id="openCalendarBtn">📅 Календарь</button>
+</div>
+
+<!-- 📆 Всплывающее окно календаря -->
+<div class="calendar-wrapper" id="calendarWrapper" style="display: none;">
+  <div class="calendar-header">
+    <h3 id="calendarTitle"></h3>
+    <div>
+      <button id="prevMonthBtn">&#9664;</button>
+      <button id="nextMonthBtn">&#9654;</button>
+      <button id="closeCalendarBtn" class="close-btn">✖</button>
+    </div>
+  </div>
+  <div class="calendar-grid" id="calendarGrid"></div>
+</div>
+
+<style>
+  /* Кнопка открытия */
+  .calendar-toggle {
+    position: absolute;
+    top: 85px;
+    right: 40px;
+    z-index: 40;
+  }
+  .calendar-toggle button {
+    background: #0078D7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .calendar-toggle button:hover {
+    background: #005fa3;
+  }
+
+  /* Окно календаря */
+  .calendar-wrapper {
+    position: absolute;
+    top: 130px;
+    right: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 280px;
+    padding: 15px;
+    font-family: "Segoe UI", sans-serif;
+    z-index: 50;
+  }
+
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .calendar-header h3 {
+    font-size: 1em;
+    margin: 0;
+    color: #1f2937;
+  }
+  .calendar-header button {
+    background: #0078D7;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-left: 2px;
+  }
+  .calendar-header button:hover {
+    background: #005fa3;
+  }
+  .close-btn {
+    background: #ef4444 !important;
+  }
+  .close-btn:hover {
+    background: #dc2626 !important;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 4px;
+  }
+  .calendar-grid div {
+    padding: 5px 0;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #374151;
+  }
+  .day-name {
+    font-weight: bold;
+    color: #0078D7;
+  }
+  .calendar-day:hover {
+    background: #e5f0ff;
+    cursor: pointer;
+  }
+  .today {
+    background: #0078D7;
+    color: white;
+    font-weight: bold;
+  }
+</style>
+
+<script>
+  const calWrapper = document.getElementById("calendarWrapper");
+  const openBtn = document.getElementById("openCalendarBtn");
+  const closeBtn = document.getElementById("closeCalendarBtn");
+  const calGrid = document.getElementById("calendarGrid");
+  const calTitle = document.getElementById("calendarTitle");
+  const prevMonthBtn = document.getElementById("prevMonthBtn");
+  const nextMonthBtn = document.getElementById("nextMonthBtn");
+
+  const monthNames = [
+    "Январь","Февраль","Март","Апрель","Май","Июнь",
+    "Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"
+  ];
+  const dayNames = ["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
+
+  let current = new Date();
+
+  function renderMiniCalendar() {
+    const y = current.getFullYear();
+    const m = current.getMonth();
+    calTitle.textContent = `${monthNames[m]} ${y}`;
+    calGrid.innerHTML = "";
+
+    dayNames.forEach(d => {
+      const div = document.createElement("div");
+      div.textContent = d;
+      div.className = "day-name";
+      calGrid.appendChild(div);
+    });
+
+    const first = new Date(y, m, 1);
+    const last = new Date(y, m + 1, 0);
+    const startDay = (first.getDay() + 6) % 7;
+
+    for (let i = 0; i < startDay; i++) {
+      const empty = document.createElement("div");
+      calGrid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= last.getDate(); d++) {
+      const div = document.createElement("div");
+      div.textContent = d;
+      div.className = "calendar-day";
+      const today = new Date();
+      if (
+        d === today.getDate() &&
+        m === today.getMonth() &&
+        y === today.getFullYear()
+      ) {
+        div.classList.add("today");
+      }
+      calGrid.appendChild(div);
+    }
+  }
+
+  prevMonthBtn.addEventListener("click", () => {
+    current.setMonth(current.getMonth() - 1);
+    renderMiniCalendar();
+  });
+  nextMonthBtn.addEventListener("click", () => {
+    current.setMonth(current.getMonth() + 1);
+    renderMiniCalendar();
+  });
+  openBtn.addEventListener("click", () => {
+    calWrapper.style.display = "block";
+    renderMiniCalendar();
+  });
+  closeBtn.addEventListener("click", () => {
+    calWrapper.style.display = "none";
+  });
+
+  // Закрытие при клике вне календаря
+  document.addEventListener("click", (e) => {
+    if (
+      !calWrapper.contains(e.target) &&
+      !openBtn.contains(e.target)
+    ) {
+      calWrapper.style.display = "none";
+    }
+  });
+</script>

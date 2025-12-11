@@ -14,7 +14,7 @@
     .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-weight:700;border:1px solid transparent;text-decoration:none;color:var(--text);transition:transform .2s ease}
     .btn.primary{background:linear-gradient(120deg,var(--accent-1),var(--accent-2));box-shadow:0 12px 30px rgba(255,111,183,0.4)}
     .center{min-height:60vh;display:flex;align-items:center;justify-content:center}
-    #timer{position:fixed;top:20px;right:20px;z-index:10;background:rgba(255,111,183,0.2);border:1px solid rgba(255,111,183,0.5);padding:12px 16px;border-radius:10px;color:var(--text);font-weight:700;font-size:14px;backdrop-filter:blur(10px)}
+    #timer{position:fixed;top:20px;right:20px;z-index:100;background:rgba(255,111,183,0.3);border:2px solid rgba(255,111,183,0.8);padding:14px 18px;border-radius:12px;color:#fff;font-weight:700;font-size:16px;backdrop-filter:blur(10px);box-shadow:0 8px 20px rgba(255,111,183,0.4);white-space:nowrap}
   </style>
 </head>
 <body>
@@ -32,11 +32,11 @@
   </main>
   <script>
     function updateTimer(){
-      const targetDate = new Date('2025-12-20').getTime();
+      const targetDate = new Date('2025-12-14').getTime();
       const now = new Date().getTime();
       const diff = targetDate - now;
       if (diff <= 0) {
-        document.getElementById('timer').textContent = 'Готово! 🎉';
+        document.getElementById('timer').textContent = '🎉 Пришло время! 🎉';
         return;
       }
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));

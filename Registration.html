@@ -70,6 +70,8 @@
             'label-course': 'Курс',
             'label-agree': 'Мен дербес деректерді өңдеуге келісемін',
             'register-button': 'Тіркелу',
+            'fill-fields': 'Барлық өрістерді толтырып, шарттармен келісіңіз.',
+            'server-conn-error': 'Серверге қосылу қатесі. server.js файлын тексеріңіз.',
         },
         'RU': {
             'reg-title': 'Регистрация',
@@ -81,6 +83,8 @@
             'label-course': 'Курс',
             'label-agree': 'Я согласен на обработку персональных данных',
             'register-button': 'Зарегистрироваться',
+            'fill-fields': 'Пожалуйста, заполните все поля и согласитесь с условиями.',
+            'server-conn-error': 'Ошибка подключения к серверу. Проверьте server.js.',
         },
         'EN': {
             'reg-title': 'Registration',
@@ -92,19 +96,22 @@
             'label-course': 'Course',
             'label-agree': 'I agree to the processing of personal data',
             'register-button': 'Register',
+            'fill-fields': 'Please fill all fields and agree to the terms.',
+            'server-conn-error': 'Server connection error. Check server.js.',
         }
     };
-
     function setLanguage(lang) {
-        localStorage.setItem('selectedLang', lang);
-        const langData = translations[lang];
+        // Keep language key consistent across the app
+        localStorage.setItem('currentLanguage', lang);
+        const langData = translations[lang] || translations['RU'];
 
         for (const id in langData) {
             const element = document.getElementById(id);
             if (element) {
                 if (element.tagName === 'INPUT') {
                     const placeholderKey = `data-placeholder-${lang.toLowerCase()}`;
-                    element.placeholder = element.getAttribute(placeholderKey);
+                    const ph = element.getAttribute(placeholderKey);
+                    if (ph) element.placeholder = ph;
                 } else if (element.tagName === 'BUTTON') {
                     element.textContent = langData[id];
                 } else {
@@ -115,8 +122,11 @@
         document.title = langData['reg-title'];
     }
 
+    // При загрузке: берем параметр ?lang или хранимый выбор в localStorage
     document.addEventListener('DOMContentLoaded', () => {
-        const savedLang = localStorage.getItem('selectedLang') || 'RU';
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlLang = urlParams.get('lang');
+        const savedLang = urlLang || localStorage.getItem('currentLanguage') || 'RU';
         setLanguage(savedLang);
     });
 
@@ -136,8 +146,11 @@
         messageElement.textContent = "";
         messageElement.style.color = "red";
 
+        const curLang = localStorage.getItem('currentLanguage') || 'RU';
+        const L = translations[curLang] || translations['RU'];
+
         if (!name || !login || !password || !email || !group || !course || !agree) {
-            messageElement.textContent = "Пожалуйста, заполните все поля и согласитесь с условиями.";
+            messageElement.textContent = L['fill-fields'];
             return;
         }
         
@@ -152,17 +165,20 @@
 
             if (response.ok) {
                 messageElement.style.color = "green";
-                messageElement.textContent = data.message; 
+                messageElement.textContent = data.message || '';
                 
                 setTimeout(() => {
-                    window.location.href = "fafa.html"; 
+                    const langParam = localStorage.getItem('currentLanguage') || 'RU';
+                    window.location.href = `fafa.html?lang=${langParam}`;
                 }, 2000); 
 
             } else {
-                messageElement.textContent = data.message || "Ошибка при регистрации.";
+                messageElement.textContent = data.message || (L['server-conn-error'] || 'Ошибка при регистрации.');
             }
         } catch (error) {
-            messageElement.textContent = "Ошибка подключения к серверу. Проверьте server.js."; 
+            const cur = localStorage.getItem('currentLanguage') || 'RU';
+            const L2 = translations[cur] || translations['RU'];
+            messageElement.textContent = L2['server-conn-error']; 
             console.error("Fetch error:", error);
         }
     });

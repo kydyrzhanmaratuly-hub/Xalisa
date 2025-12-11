@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Праздник</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg-1:#0b0f25;--bg-2:#141b35;--accent-1:#ff6fb7;--accent-2:#7dd6ff;--glass:rgba(255,255,255,0.08);--border:rgba(255,255,255,0.15);--text:#f7f9ff;--muted:#c8d2f4}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Manrope,system-ui,sans-serif;background:radial-gradient(120% 120% at 10% 20%, rgba(255,111,183,0.15), transparent), radial-gradient(90% 90% at 80% 0%, rgba(125,214,255,0.17), transparent), linear-gradient(135deg,var(--bg-1),var(--bg-2));color:var(--text);overflow-x:hidden}
+    .bg-glow{position:fixed;inset:0;pointer-events:none;z-index:0}.glow{position:absolute;filter:blur(60px);opacity:0.35}.glow.pink{width:380px;height:380px;background:var(--accent-1);top:10%;left:10%}.glow.blue{width:420px;height:420px;background:var(--accent-2);top:0;right:8%}.glow.gold{width:320px;height:320px;background:#ffe58a;bottom:5%;left:30%}
+    .snowflakes{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:2}.snowflake{position:absolute;top:-10%;color:rgba(255,255,255,0.8);font-size:clamp(10px,2vw,18px);animation:fall linear infinite;text-shadow:0 0 8px rgba(255,255,255,0.4)}@keyframes fall{0%{transform:translate3d(var(--x),-10%,0) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translate3d(var(--x-end),110vh,0) rotate(360deg);opacity:0}}
+    .wrapper{position:relative;z-index:3;max-width:1100px;margin:0 auto;padding:48px 22px 64px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border-radius:12px;font-weight:700;border:1px solid transparent;text-decoration:none;color:var(--text);transition:transform .2s ease}
+    .btn.primary{background:linear-gradient(120deg,var(--accent-1),var(--accent-2));box-shadow:0 12px 30px rgba(255,111,183,0.4)}
+    .center{min-height:60vh;display:flex;align-items:center;justify-content:center}
+  </style>
+</head>
+<body>
+  <div class="bg-glow"><div class="glow pink"></div><div class="glow blue"></div><div class="glow gold"></div></div>
+  <div class="snowflakes" aria-hidden="true">
+    <div class="snowflake" style="--x:5vw;--x-end:8vw;animation-duration:16s;animation-delay:0s">✺</div>
+    <div class="snowflake" style="--x:20vw;--x-end:24vw;animation-duration:18s;animation-delay:2s">✵</div>
+    <div class="snowflake" style="--x:35vw;--x-end:30vw;animation-duration:15s;animation-delay:4s">✻</div>
+  </div>
+  <main class="wrapper">
+    <div class="center">
+      <a class="btn primary" href="letter.html" target="_blank" rel="noopener noreferrer">Для самой красивой девушки</a>
+    </div>
+  </main>
+</body>
+</html>

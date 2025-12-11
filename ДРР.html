@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Kleine Prinzessin❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-1: #0b0f25;
+            --bg-2: #141b35;
+            --accent-1: #ff6fb7;
+            --accent-2: #7dd6ff;
+            --accent-3: #ffe58a;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #f7f9ff;
+            --muted: #c8d2f4;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Manrope', system-ui, sans-serif;
+            background: radial-gradient(120% 120% at 10% 20%, rgba(255, 111, 183, 0.15), transparent),
+                        radial-gradient(90% 90% at 80% 0%, rgba(125, 214, 255, 0.17), transparent),
+                        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        .bg-glow {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* photo removed — keeping background and CTA */
+        .glow {
+            position: absolute;
+            filter: blur(60px);
+            opacity: 0.35;
+        }
+        .glow.pink { width: 380px; height: 380px; background: var(--accent-1); top: 10%; left: 10%; }
+        .glow.blue { width: 420px; height: 420px; background: var(--accent-2); top: 0%; right: 8%; }
+        .glow.gold { width: 320px; height: 320px; background: var(--accent-3); bottom: 5%; left: 30%; }
+
+        .snowflakes {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 2;
+        }
+        .snowflake {
+            position: absolute;
+            top: -10%;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(10px, 2vw, 18px);
+            animation: fall linear infinite;
+            text-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+        @keyframes fall {
+            0% { transform: translate3d(var(--x), -10%, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translate3d(var(--x-end), 110vh, 0) rotate(360deg); opacity: 0; }
+        }
+        .wrapper {
+            position: relative;
+            z-index: 3;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 22px 64px;
+        }
+        .hero {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            letter-spacing: 0.4px;
+            font-size: 14px;
+        }
+        .tag::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            box-shadow: 0 0 12px rgba(255,255,255,0.7);
+        }
+        h1 {
+            font-family: 'Playfair Display', 'Times New Roman', serif;
+            margin: 16px 0 12px;
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+        .lead {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--muted);
+            max-width: 760px;
+            margin: 0 0 22px;
+        }
+        .cta-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: var(--text);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .btn.primary {
+            background: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+            box-shadow: 0 12px 30px rgba(255, 111, 183, 0.4);
+        }
+        .btn.secondary {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--muted);
+        }
+        .btn:hover { transform: translateY(-2px) scale(1.01); }
+        .layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 22px;
+            margin-top: 28px;
+        }
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px 18px 18px 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 20px;
+            letter-spacing: -0.01em;
+        }
+        .pill {
+            display: inline-flex;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 14px;
+            margin: 6px 8px 6px 0;
+        }
+        .list {
+            margin: 12px 0 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 10px;
+        }
+        .list li {
+            padding: 12px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            color: var(--muted);
+        }
+        .list li span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+            box-shadow: 0 0 12px rgba(125,214,255,0.6);
+        }
+        .poem {
+            white-space: pre-line;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        .footer {
+            margin-top: 32px;
+            padding: 18px 20px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 920px) {
+            .layout { grid-template-columns: 1fr; }
+            .hero { padding: 26px; }
+        }
+        @media (max-width: 560px) {
+            .cta-row { width: 100%; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="glow pink"></div>
+        <div class="glow blue"></div>
+        <div class="glow gold"></div>
+    </div>
+
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake" style="--x: 5vw; --x-end: 8vw; animation-duration: 16s; animation-delay: 0s;">✺</div>
+        <div class="snowflake" style="--x: 20vw; --x-end: 24vw; animation-duration: 18s; animation-delay: 2s;">✵</div>
+        <div class="snowflake" style="--x: 35vw; --x-end: 30vw; animation-duration: 15s; animation-delay: 4s;">✻</div>
+        <div class="snowflake" style="--x: 50vw; --x-end: 55vw; animation-duration: 20s; animation-delay: 1s;">✼</div>
+        <div class="snowflake" style="--x: 65vw; --x-end: 60vw; animation-duration: 17s; animation-delay: 3s;">❄</div>
+        <div class="snowflake" style="--x: 80vw; --x-end: 78vw; animation-duration: 19s; animation-delay: 5s;">✺</div>
+        <div class="snowflake" style="--x: 90vw; --x-end: 85vw; animation-duration: 16s; animation-delay: 7s;">✻</div>
+        <div class="snowflake" style="--x: 15vw; --x-end: 12vw; animation-duration: 21s; animation-delay: 8s;">✵</div>
+        <div class="snowflake" style="--x: 42vw; --x-end: 46vw; animation-duration: 14s; animation-delay: 6s;">❅</div>
+        <div class="snowflake" style="--x: 72vw; --x-end: 70vw; animation-duration: 22s; animation-delay: 9s;">✼</div>
+        <div class="snowflake" style="--x: 5vw; --x-end: 10vw; animation-duration: 24s; animation-delay: 10s;">❄</div>
+        <div class="snowflake" style="--x: 55vw; --x-end: 53vw; animation-duration: 18s; animation-delay: 11s;">✺</div>
+    </div>
+
+    <main class="wrapper">
+        <!-- Centered CTA button (photo removed) -->
+        <div style="min-height:60vh; display:flex; align-items:center; justify-content:center; position:relative; z-index:3;">
+            <a class="btn primary big-center-btn" href="site/letter.html" target="_blank" rel="noopener noreferrer">Для самой красивой девушки</a>
+        </div>
+    </main>
+        <!-- photo helper script removed -->
+</body>
+</html>

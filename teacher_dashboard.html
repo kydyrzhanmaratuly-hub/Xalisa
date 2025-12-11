@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель учителя</title>
+    <link rel="stylesheet" href="Teacher_Grades.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>👨‍🏫 Панель учителя</h1>
+            <div class="user-info">
+                <p><strong id="teacherName">Загрузка...</strong></p>
+                <p>Группа: <span id="teacherGroup">---</span></p>
+                <button class="logout-btn" onclick="logout()">Выйти</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Всего студентов</h3>
+                <div class="number" id="totalStudents">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Средний балл группы</h3>
+                <div class="number" id="avgGrade">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Предметов</h3>
+                <div class="number" id="totalSubjects">0</div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <h2>📊 Управление оценками</h2>
+            
+            <div class="success-message" id="successMessage">
+                Оценки успешно сохранены!
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Предмет</label>
+                    <select id="subjectFilter">
+                        <option value="">Выберите предмет...</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Поиск студента</label>
+                    <input type="text" id="studentSearch" placeholder="Введите имя студента...">
+                </div>
+            </div>
+
+            <div id="loadingArea" class="loading">Загрузка данных...</div>
+            <div id="noDataArea" class="no-data" style="display: none;">
+                Выберите предмет для отображения студентов
+            </div>
+
+            <div id="tableArea" style="display: none;">
+                <table class="students-table">
+                    <thead>
+                        <tr>
+                            <th>Студент</th>
+                            <th>Логин</th>
+                            <th>Текущая оценка</th>
+                            <th>Новая оценка (0-100)</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let teacherData = null;
+        let studentsData = [];
+        let gradesData = {};
+        let teacherDashLabels = {
+            saveButton: 'Сохранить'
+        };
+
+        const teacherDashTranslations = {
+            RU: {
+                header: '👨‍🏫 Панель учителя',
+                groupLabel: 'Группа:',
+                logout: 'Выйти',
+                stat_totalStudents: 'Всего студентов',
+                stat_avgGrade: 'Средний балл группы',
+                stat_totalSubjects: 'Предметов',
+                mainTitle: '📊 Управление оценками',
+                successSaved: 'Оценки успешно сохранены!',
+                filter_subject: 'Предмет',
+                filter_search: 'Поиск студента',
+                choose_subject: 'Выберите предмет...',
+                search_placeholder: 'Введите имя студента...',
+                loading: 'Загрузка данных...',
+                noData: 'Выберите предмет для отображения студентов',
+                table_headers: ['Студент', 'Логин', 'Текущая оценка', 'Новая оценка (0-100)', 'Действие'],
+                saveButton: 'Сохранить'
+            },
+            KZ: {
+                header: '👨‍🏫 Ұстаз панелі',
+                groupLabel: 'Топ:',
+                logout: 'Шығу',
+                stat_totalStudents: 'Оқушылар саны',
+                stat_avgGrade: 'Топтың орташа бағасы',
+                stat_totalSubjects: 'Пәндер',
+                mainTitle: '📊 Бағаларды басқару',
+                successSaved: 'Бағалар сәтті сақталды!',
+                filter_subject: 'Пән',
+                filter_search: 'Студентті іздеу',
+                choose_subject: 'Пәнді таңдаңыз...',
+                search_placeholder: 'Студенттің атын енгізіңіз...',
+                loading: 'Деректер жүктелуде...',
+                noData: 'Студенттерді көрсету үшін пәнді таңдаңыз',
+                table_headers: ['Студент', 'Логин', 'Ағымдағы баға', 'Жаңа баға (0-100)', 'Әрекет'],
+                saveButton: 'Сақтау'
+            },
+            EN: {
+                header: '👨‍🏫 Teacher Dashboard',
+                groupLabel: 'Group:',
+                logout: 'Logout',
+                stat_totalStudents: 'Total students',
+                stat_avgGrade: 'Group average grade',
+                stat_totalSubjects: 'Subjects',
+                mainTitle: '📊 Grades management',
+                successSaved: 'Grades saved successfully!',
+                filter_subject: 'Subject',
+                filter_search: 'Search student',
+                choose_subject: 'Choose a subject...',
+                search_placeholder: 'Enter student name...',
+                loading: 'Loading data...',
+                noData: 'Select a subject to show students',
+                table_headers: ['Student', 'Login', 'Current grade', 'New grade (0-100)', 'Action'],
+                saveButton: 'Save'
+            }
+        };
+
+        function applyDashboardLang(lang) {
+            const L = teacherDashTranslations[lang] || teacherDashTranslations.RU;
+            // Header
+            const headerH1 = document.querySelector('.header-content h1');
+            if (headerH1) headerH1.textContent = L.header;
+            // Group label (preserve span)
+            const groupSpan = document.getElementById('teacherGroup');
+            if (groupSpan) {
+                const parentP = groupSpan.parentElement;
+                parentP.innerHTML = `${L.groupLabel} <span id="teacherGroup">${groupSpan.textContent}</span>`;
+            }
+            // Logout button
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) logoutBtn.textContent = L.logout;
+            // Stats titles
+            const statH3 = document.querySelectorAll('.stats-grid .stat-card h3');
+            if (statH3 && statH3.length >= 3) {
+                statH3[0].textContent = L.stat_totalStudents;
+                statH3[1].textContent = L.stat_avgGrade;
+                statH3[2].textContent = L.stat_totalSubjects;
+            }
+            // Main title
+            const mainH2 = document.querySelector('.main-card h2');
+            if (mainH2) mainH2.textContent = L.mainTitle;
+            // Success message
+            const successMsg = document.getElementById('successMessage');
+            if (successMsg) successMsg.textContent = L.successSaved;
+            // Filters
+            const filterLabels = document.querySelectorAll('.filters .filter-group label');
+            if (filterLabels && filterLabels.length >= 2) {
+                filterLabels[0].textContent = L.filter_subject;
+                filterLabels[1].textContent = L.filter_search;
+            }
+            // Subject select placeholder
+            const subjectSelect = document.getElementById('subjectFilter');
+            if (subjectSelect) {
+                if (subjectSelect.options && subjectSelect.options.length > 0) {
+                    subjectSelect.options[0].text = L.choose_subject;
+                }
+            }
+            // Search placeholder
+            const studentSearch = document.getElementById('studentSearch');
+            if (studentSearch) studentSearch.placeholder = L.search_placeholder;
+            // Loading and no data
+            const loadingArea = document.getElementById('loadingArea');
+            if (loadingArea) loadingArea.textContent = L.loading;
+            const noDataArea = document.getElementById('noDataArea');
+            if (noDataArea) noDataArea.textContent = L.noData;
+            // Table headers
+            const ths = document.querySelectorAll('.students-table thead th');
+            if (ths && ths.length === L.table_headers.length) {
+                ths.forEach((th, i) => th.textContent = L.table_headers[i]);
+            }
+            // Save button label for dynamically created rows
+            teacherDashLabels.saveButton = L.saveButton;
+            try { localStorage.setItem('currentLanguage', lang); } catch (e) {}
+        }
+
+        // Загрузка данных при старте
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Apply language from URL or storage
+            const params = new URLSearchParams(window.location.search);
+            const urlLang = params.get('lang');
+            const lang = urlLang || localStorage.getItem('currentLanguage') || 'RU';
+            applyDashboardLang(lang);
+            // Проверка авторизации
+            const teacherDataStr = localStorage.getItem('teacherData');
+            if (!teacherDataStr) {
+                    const lang = localStorage.getItem('currentLanguage') || 'RU';
+                    window.location.href = `teacher_login.html?lang=${lang}`;
+                    return;
+                }
+
+            teacherData = JSON.parse(teacherDataStr);
+            document.getElementById('teacherName').textContent = teacherData.fullName;
+            document.getElementById('teacherGroup').textContent = teacherData.group;
+
+            await loadData();
+        });
+
+        async function loadData() {
+            try {
+                // Загрузка расписания группы
+                const scheduleRes = await fetch(`http://localhost:3000/api/schedule/${encodeURIComponent(teacherData.group)}`);
+                const scheduleData = await scheduleRes.json();
+                
+                // Получаем уникальные предметы
+                const subjects = [...new Set(scheduleData.schedule.map(item => item.subject))];
+                document.getElementById('totalSubjects').textContent = subjects.length;
+
+                // Заполняем список предметов
+                const subjectFilter = document.getElementById('subjectFilter');
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    subjectFilter.appendChild(option);
+                });
+
+                // Загрузка студентов группы
+                const studentsRes = await fetch(`http://localhost:3000/api/students/${encodeURIComponent(teacherData.group)}`);
+                studentsData = await studentsRes.json();
+                document.getElementById('totalStudents').textContent = studentsData.length;
+
+                // Загрузка оценок
+                const gradesRes = await fetch(`http://localhost:3000/api/grades/${encodeURIComponent(teacherData.group)}`);
+                gradesData = await gradesRes.json();
+
+                calculateAvgGrade();
+
+                document.getElementById('loadingArea').style.display = 'none';
+                document.getElementById('noDataArea').style.display = 'block';
+
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('loadingArea').innerHTML = 
+                    '<div style="color: red;">Ошибка загрузки данных. Проверьте подключение к серверу.</div>';
+            }
+        }
+
+        // Фильтр по предмету
+        document.getElementById('subjectFilter').addEventListener('change', (e) => {
+            const subject = e.target.value;
+            if (subject) {
+                displayStudents(subject);
+            } else {
+                document.getElementById('tableArea').style.display = 'none';
+                document.getElementById('noDataArea').style.display = 'block';
+            }
+        });
+
+        // Поиск студента
+        document.getElementById('studentSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#studentsTableBody tr');
+            
+            rows.forEach(row => {
+                const studentName = row.cells[0].textContent.toLowerCase();
+                row.style.display = studentName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        function displayStudents(subject) {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            studentsData.forEach(student => {
+                const currentGrade = gradesData[student.login]?.[subject] || 0;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.login}</td>
+                    <td><strong>${currentGrade}</strong></td>
+                    <td>
+                        <input type="number" 
+                               class="grade-input" 
+                               min="0" 
+                               max="100" 
+                               value="${currentGrade}"
+                               data-student="${student.login}"
+                               data-subject="${subject}">
+                    </td>
+                    <td>
+                        <button class="save-btn" onclick="saveGrade('${student.login}', '${subject}')">
+                            ${teacherDashLabels.saveButton}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.getElementById('noDataArea').style.display = 'none';
+            document.getElementById('tableArea').style.display = 'block';
+        }
+
+        async function saveGrade(studentLogin, subject) {
+            const input = document.querySelector(`input[data-student="${studentLogin}"][data-subject="${subject}"]`);
+            const grade = parseInt(input.value);
+
+            if (grade < 0 || grade > 100) {
+                alert('Оценка должна быть от 0 до 100');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/api/save-grade', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        studentLogin,
+                        subject,
+                        grade,
+                        group: teacherData.group
+                    })
+                });
+
+                if (response.ok) {
+                    // Обновляем локальные данные
+                    if (!gradesData[studentLogin]) gradesData[studentLogin] = {};
+                    gradesData[studentLogin][subject] = grade;
+
+                    // Показываем сообщение об успехе
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 3000);
+
+                    // Обновляем средний балл
+                    calculateAvgGrade();
+                    
+                    // Обновляем таблицу
+                    displayStudents(subject);
+                } else {
+                    alert('Ошибка сохранения оценки');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка подключения к серверу');
+            }
+        }
+
+        function calculateAvgGrade() {
+            let total = 0;
+            let count = 0;
+
+            Object.values(gradesData).forEach(studentGrades => {
+                Object.values(studentGrades).forEach(grade => {
+                    total += grade;
+                    count++;
+                });
+            });
+
+            const avg = count > 0 ? (total / count).toFixed(1) : 0;
+            document.getElementById('avgGrade').textContent = avg;
+        }
+
+        function logout() {
+            localStorage.removeItem('teacherData');
+                const lang = localStorage.getItem('currentLanguage') || 'RU';
+                window.location.href = `teacher_login.html?lang=${lang}`;
+        }
+    </script>
+</body>
+</html>

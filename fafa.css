@@ -245,3 +245,32 @@ body {
     color: #87CD2A; /* Зеленый цвет при наведении */
     text-decoration: underline; /* Добавляем подчеркивание при наведении */
 }
+.teacher-section {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .teacher-section p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .teacher-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .teacher-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }

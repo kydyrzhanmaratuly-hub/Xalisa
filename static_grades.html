@@ -5,23 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Табель успеваемости</title>
     <link rel="stylesheet" href="static.css">
+    <style>
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+        .error-message {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            color: #c00;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
-        <img src="Kini German.png" alt="Логотип" class="logo-image">
+        <a href="https://kini.kz/en" target="_blank" rel="noopener noreferrer">
+            <img src="Kini German.png" alt="Логотип" class="logo-image">
+        </a>
         <div class="nav-links">
             <a href="#" class="nav-button">Мой кабинет</a>
             <a href="static_grades.html" class="nav-button active">Табель успеваемости</a>
             <a href="static.html" class="nav-button">Расписание</a>
         </div>
     </div>
-    
+
     <div class="stats-container">
-        
-        <h2 class="stats-title">Табель успеваемости: Октябрь 2025</h2>
-        
-        <div class="stats-card">
-            
+        <h2 class="stats-title" id="pageTitle">Загрузка...</h2>
+        <div id="loadingMessage" class="loading">Загрузка данных...</div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="gradesContent" class="stats-card" style="display: none;">
             <table class="grades-table">
                 <thead>
                     <tr>
@@ -31,35 +48,119 @@
                         <th>Итоговая оценка</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="subject-col">Высшая математика</td>
-                        <td>92%</td>
-                        <td>92</td>
-                        <td class="grade A">A</td>
-                    </tr>
-                    <tr>
-                        <td class="subject-col">Английский язык (Практ.)</td>
-                        <td>81%</td>
-                        <td>81</td>
-                        <td class="grade B">B</td>
-                    </tr>
-                    <tr>
-                        <td class="subject-col">Основы программирования</td>
-                        <td>65%</td>
-                        <td>65</td>
-                        <td class="grade C">C</td>
-                    </tr>
-                    <tr>
-                        <td class="subject-col">Физика</td>
-                        <td>55%</td>
-                        <td>55</td>
-                        <td class="grade D">D</td>
-                    </tr>
+                <tbody id="gradesTableBody">
+                    <!-- Данные будут загружены динамически -->
                 </tbody>
             </table>
-            
         </div>
     </div>
+
+    <script>
+        // Функция для получения буквенной оценки по баллам
+        function getLetterGrade(score) {
+            if (score >= 90) return 'A';
+            if (score >= 75) return 'B';
+            if (score >= 60) return 'C';
+            if (score >= 50) return 'D';
+            return 'F';
+        }
+
+        // Загрузка данных табеля
+        async function loadGrades() {
+            try {
+                // Получаем данные пользователя из localStorage (ключ 'userData')
+                const userDataStr = localStorage.getItem('userData');
+                
+                if (!userDataStr) {
+                    showError('Пользователь не авторизован. Пожалуйста, войдите в систему.');
+                    return;
+                }
+
+                const userData = JSON.parse(userDataStr);
+                const userGroup = userData.group;
+                const userLogin = userData.login;
+                
+                console.log('Загружены данные пользователя:', userData);
+                console.log('Группа пользователя:', userGroup);
+                console.log('Логин пользователя:', userLogin);
+
+                // Обновляем заголовок страницы
+                document.getElementById('pageTitle').textContent = 
+                    `Табель успеваемости: ${userData.name} (Группа ${userGroup})`;
+
+                // Загружаем расписание группы с сервера
+                const scheduleResponse = await fetch(`http://localhost:3000/api/schedule/${encodeURIComponent(userGroup)}`);
+                
+                if (!scheduleResponse.ok) {
+                    throw new Error(`Расписание для группы ${userGroup} не найдено`);
+                }
+
+                const scheduleData = await scheduleResponse.json();
+                
+                // Получаем уникальные предметы из расписания
+                const uniqueSubjects = [...new Set(scheduleData.schedule.map(item => item.subject))];
+
+                if (uniqueSubjects.length === 0) {
+                    showError('Не найдено предметов для вашей группы.');
+                    return;
+                }
+
+                console.log('Предметы группы:', uniqueSubjects);
+
+                // Загружаем РЕАЛЬНЫЕ оценки студента с сервера
+                let studentGrades = {};
+                try {
+                    const gradesResponse = await fetch(`http://localhost:3000/api/student-grades/${encodeURIComponent(userLogin)}`);
+                    if (gradesResponse.ok) {
+                        studentGrades = await gradesResponse.json();
+                        console.log('Оценки студента из БД:', studentGrades);
+                    } else {
+                        console.log('Оценки еще не выставлены');
+                    }
+                } catch (error) {
+                    console.log('Не удалось загрузить оценки, будут показаны нулевые значения');
+                }
+
+                // Генерируем табель успеваемости
+                const tableBody = document.getElementById('gradesTableBody');
+                tableBody.innerHTML = '';
+
+                uniqueSubjects.forEach(subject => {
+                    // БЕРЕМ РЕАЛЬНУЮ ОЦЕНКУ ИЗ БД, если нет - показываем 0
+                    const score = studentGrades[subject] || 0;
+                    const letterGrade = score > 0 ? getLetterGrade(score) : '-';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="subject-col">${subject}</td>
+                        <td>${score}%</td>
+                        <td>${score}</td>
+                        <td class="grade ${letterGrade}">${letterGrade}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                // Показываем таблицу, скрываем сообщение о загрузке
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('gradesContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Ошибка при загрузке данных:', error);
+                showError(`Ошибка загрузки данных: ${error.message}`);
+            }
+        }
+
+        // Показать сообщение об ошибке
+        function showError(message) {
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('gradesContent').style.display = 'none';
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        // Загружаем данные при загрузке страницы
+        window.addEventListener('DOMContentLoaded', loadGrades);
+    </script>
 </body>
 </html>

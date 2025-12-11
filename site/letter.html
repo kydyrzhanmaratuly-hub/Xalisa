@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Письмо</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg-1:#0b0f25;--bg-2:#141b35;--text:#f7f9ff;--muted:#c8d2f4}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Manrope,system-ui,sans-serif;background:linear-gradient(135deg,var(--bg-1),var(--bg-2));color:var(--text);padding:40px;display:flex;align-items:center;justify-content:center}
+    .card{max-width:880px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);padding:28px;border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,0.5)}
+    h1{margin:0 0 12px;font-size:20px;color:var(--muted)}
+    .poem{white-space:pre-line;color:var(--muted);line-height:1.7;font-size:16px}
+    .controls{margin-top:18px;display:flex;gap:10px;justify-content:flex-end}
+    .btn{background:linear-gradient(120deg,#ff6fb7,#7dd6ff);color:#111;border:none;padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Послание</h1>
+    <div class="poem">
+Халиса, сені күнде көргім келіп, көптің арасынан үнемі өз көзіңді іздеймін. Говорят, любовь живёт три года, бірақ менің саған деген махаббатым мәңгілік. Қазір осы хатты жазудың өзі сенімен сырласып, сөйлескім келеді. Көптің арасында болсамда сенсіз жалгыздык. «Тілеп алғаным», мені кешір. Сенен алыстап, ұмытамын деп ойладым менен алшақтап, бақытты боларсың дедім. Бірақ саған еш жан тең келмейді. Көрсін-көрмесін адамдар, менің саған деген махаббатым — сол баяғы. Жазбай өкініп, өзімнің тағдырымды сен екеніңді біліп жібергенше, тырысып сені көріп, жыраққа кеткенім мың есе артық. Қайтадан келші қасыма. Ернар Амандықтың өленімен, сенің бейненді сол видеолардан көрумен өтуде.  Сенің қасында болған тыныштық өзі көп заттар айтады. Күнім, түнімен алмасып сені ойлаумен жүрмін.
+Эти строки тебе…
+
+Я жил тобой…
+
+У всех свои проблемы, интересы,
+А моими проблемами и интересами
+Была лишь ты.
+Ты — как весна в оконной раме,
+Как свет в конце, как сны без драмы,
+Ты — вся моя ось, моя тишина,
+Моя война и моя вина.
+
+Я жил тобой, дышал тобой,
+Горел в тебе, сгорал без боя,
+И каждый день был как ответ
+На то, чего во мне уж нет.
+Ты знала всё: мой страх, мой смех,
+Мой сон, разбитый на успех,
+Ты — пульс моих немых минут,
+Где даже звёзды не соврут.
+
+Туған күніңмен. Егер көңіліңді кұртып жіберсем кешірім сұраймын
+    </div>
+    <div class="controls">
+      <a class="btn ghost" href="#" onclick="window.close();return false;">Закрыть</a>
+      <a id="sendInsta" class="btn" href="#" onclick="openInstagram(event)">Отправить</a>
+    </div>
+  </div>
+  <script>
+    function openInstagram(e){
+      e.preventDefault();
+      const username = 'kydyrzhan_maratuly';
+      const instagramScheme = `instagram://user?username=${username}`;
+      const webFallback = 'https://www.instagram.com/kydyrzhan_maratuly?igsh=MWs5czBoNXF0Y3E1Yg%3D%3D&utm_source=qr';
+      const now = Date.now();
+      try{ window.location.href = instagramScheme; } catch(e){}
+      setTimeout(()=>{ if (Date.now() - now < 2000) window.location.href = webFallback; }, 800);
+    }
+  </script>
+</body>
+</html>

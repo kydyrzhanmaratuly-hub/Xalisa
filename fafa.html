@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход в систему</title>
     <link rel="stylesheet" href="fafa.css">
+    
 </head>
 <body>
     <div class="language-selector">
@@ -15,7 +16,9 @@
 
     <div class="container">
         <div class="left-side">
-    <img src="Kini German.png" alt="Logo" class="logo"> 
+    <a href="https://kini.kz/en" target="_blank" rel="noopener noreferrer">
+        <img src="Kini German.png" alt="Logo" class="logo">
+    </a>
     <p class="welcome-text" id="welcome-text-id">Добро пожаловать!</p>
     <p class="description-text" id="description-text-id">Ваш образовательный портал для современного обучения</p>
 </div>
@@ -38,6 +41,12 @@
             <p class="register-text" id="register-prompt">
                 Нет аккаунта? <a href="Registration.html" class="register-link" id="register-link-text">Регистрация</a>
             </p>
+
+            <!-- НОВЫЙ БЛОК ДЛЯ УЧИТЕЛЕЙ -->
+            <div class="teacher-section">
+                <p id="teacher-question">👨‍🏫 Вы учитель?</p>
+                <a href="teacher_login.html" class="teacher-link" id="teacher-link-text">Перейти к входу для учителей</a>
+            </div>
             
         </form>
     </div>
@@ -56,6 +65,8 @@
             'login-button': 'Войти',
             'register-prompt_prefix': 'Нет аккаунта?',
             'register-link-text': 'Регистрация',
+            'teacher-question': '👨‍🏫 Вы учитель?',
+            'teacher-link-text': 'Перейти к входу для учителей',
             'error-empty': 'Сперва введите свой логин и пароль',
             'error-conn': 'Ошибка подключения к серверу. Убедитесь, что сервер запущен.',
             'auth-success': 'Авторизация прошла успешно',
@@ -70,6 +81,8 @@
             'login-button': 'Кіру',
             'register-prompt_prefix': 'Аккаунт жоқ па?',
             'register-link-text': 'Тіркелу',
+            'teacher-question': '👨‍🏫 Сіз ұстазсыз ба?',
+            'teacher-link-text': 'Ұстаздар үшін кіру ішіне өтіңіз',
             'error-empty': 'Алдымен логин мен құпия сөзіңізді енгізіңіз',
             'error-conn': 'Серверге қосылу қатесі. Сервердің іске қосылғанына көз жеткізіңіз.',
             'auth-success': 'Авторизация сәтті өтті',
@@ -84,6 +97,8 @@
             'login-button': 'Login',
             'register-prompt_prefix': 'No account?',
             'register-link-text': 'Registration',
+            'teacher-question': '👨‍🏫 Are you a teacher?',
+            'teacher-link-text': 'Go to teacher login',
             'error-empty': 'First enter your login and password',
             'error-conn': 'Server connection error. Ensure the server is running.',
             'auth-success': 'Authorization successful',
@@ -116,8 +131,20 @@
         document.getElementById('forgot-link').textContent = t['forgot-link'];
         document.getElementById('login-button').textContent = t['login-button'];
         
-        // Обновление текста с внутренней ссылкой
-        document.getElementById('register-prompt').innerHTML = `${t['register-prompt_prefix']} <a href="Registration.html" class="register-link" id="register-link-text">${t['register-link-text']}</a>`;
+        // Обновление текста с внутренней ссылкой и установка языка в href
+        document.getElementById('register-prompt').innerHTML = `${t['register-prompt_prefix']} <a href="Registration.html?lang=${lang}" class="register-link" id="register-link-text">${t['register-link-text']}</a>`;
+        try {
+            document.getElementById('register-link-text').href = `Registration.html?lang=${lang}`;
+        } catch (e) { /* ignore if not anchor */ }
+        
+        // Обновление раздела учителей
+        document.getElementById('teacher-question').textContent = t['teacher-question'];
+        const teacherLink = document.getElementById('teacher-link-text');
+        teacherLink.textContent = t['teacher-link-text'];
+        // Устанавливаем параметр языка в ссылку для перехода
+        try {
+            teacherLink.href = `teacher_login.html?lang=${lang}`;
+        } catch (e) { /* if element not anchor or missing, ignore */ }
         
         // Обновление placeholder'ов (используя data-атрибуты)
         const langCode = lang.toLowerCase();
@@ -154,16 +181,18 @@
             return;
         }
 
-        // --- ИМИТАЦИЯ УСПЕШНОЙ АВТОРИЗАЦИИ ДЛЯ Yerkebulan/12345 ---
-        if (login === "Yerkebulan" && password === "12345") {
+        // --- ИМИТАЦИЯ УСПЕШНОЙ АВТОРИЗАЦИИ ДЛЯ ТЕСТОВЫХ АККАУНТОВ ---
+        if ((login === "Yerkebulan" && password === "12345") || (login === "Kydyrzhan" && password === "330387")) {
             // УСПЕШНЫЙ ВХОД
             errorMessage.style.color = "green";
             errorMessage.textContent = t['auth-success']; // Переведенное сообщение
             
-            // Сохраняем тестовые данные пользователя
+            // Сохраняем тестовые данные пользователя (одинаковые настройки для обоих тестовых аккаунтов)
+            const userLogin = login === 'Yerkebulan' ? 'Yerkebulan' : 'Kydyrzhan';
+            const userName = login === 'Yerkebulan' ? 'Еркебулан' : 'Kydyrzhan';
             localStorage.setItem('userData', JSON.stringify({
-                login: "Yerkebulan",
-                name: "Еркебулан",
+                login: userLogin,
+                name: userName,
                 group: "ИС-204", 
                 course: 2
             }));

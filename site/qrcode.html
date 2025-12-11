@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Генератор QR-кода</title>
+  <style>body{font-family:Arial,Helvetica,sans-serif;display:flex;min-height:100vh;align-items:center;justify-content:center;background:#0b0f25;color:#fff} .card{background:rgba(255,255,255,0.03);padding:20px;border-radius:10px;text-align:center} label{display:block;margin-bottom:8px;color:#c8d2f4} input{width:320px;padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06)} button{margin-left:8px;padding:8px 12px;border-radius:6px;border:none;background:#7dd6ff;color:#111;font-weight:700} #qrcode{margin-top:14px}</style>
+</head>
+<body>
+  <div class="card">
+    <h3>QR для сайта</h3>
+    <div>
+      <label for="url">Вставьте URL вашего сайта</label>
+      <input id="url" placeholder="https://your-github-username.github.io/your-repo/" />
+      <button id="gen">Сгенерировать</button>
+    </div>
+    <div id="qrcode"></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+      <button id="download" disabled>Скачать PNG</button>
+      <button id="copy" disabled>Скопировать ссылку</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const btn = document.getElementById('gen');
+    const downloadBtn = document.getElementById('download');
+    const copyBtn = document.getElementById('copy');
+
+    function enableControls(enabled){
+      downloadBtn.disabled = !enabled;
+      copyBtn.disabled = !enabled;
+    }
+
+    btn.addEventListener('click', ()=>{
+      const url = document.getElementById('url').value.trim();
+      if (!url) return alert('Введите URL.');
+      const container = document.getElementById('qrcode');
+      container.innerHTML = '';
+      new QRCode(container, { text: url, width: 300, height: 300 });
+      // Give the library a moment to render
+      setTimeout(()=>{
+        const img = container.querySelector('img');
+        const canvas = container.querySelector('canvas');
+        let dataUrl = null;
+        if (img) dataUrl = img.src;
+        else if (canvas) dataUrl = canvas.toDataURL('image/png');
+        if (dataUrl){
+          downloadBtn.onclick = ()=>{
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'qrcode.png';
+            a.click();
+          };
+          copyBtn.onclick = async ()=>{
+            try{ await navigator.clipboard.writeText(url); alert('Ссылка скопирована'); } catch(e){ alert('Не удалось скопировать'); }
+          };
+          enableControls(true);
+        }
+      }, 200);
+    });
+
+    // generate on load only if there's a value
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const el = document.getElementById('url');
+      if (el.value && el.value.trim()) btn.click();
+    });
+  </script>
+</body>
+</html>

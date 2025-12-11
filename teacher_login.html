@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="teacher_login.css">
+    <title>Вход для учителей</title>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍🏫 Вход для учителей</h1>
+            <p>Управляйте оценками своих студентов</p>
+        </div>
+
+        <div class="form-container">
+            <form id="teacherLoginForm">
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input type="text" id="login" placeholder="Введите ваш логин" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" placeholder="Введите ваш пароль" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Войти</button>
+
+                <div id="message" class="message"></div>
+
+                <div class="divider">───────</div>
+
+                <div class="links">
+                    <a href="teacher_registration.html" id="regLink">Регистрация для учителей</a>
+                    <a href="fafa.html" id="backToStudent">← Вернуться к входу студентов</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Простая локализация для teacher_login.html — использует ?lang= или localStorage.currentLanguage
+        const teacherTranslations = {
+            RU: {
+                title: '👨‍🏫 Вход для учителей',
+                subtitle: 'Управляйте оценками своих студентов',
+                labelLogin: 'Логин',
+                loginPlaceholder: 'Введите ваш логин',
+                labelPassword: 'Пароль',
+                passwordPlaceholder: 'Введите ваш пароль',
+                submit: 'Войти',
+                regLink: 'Регистрация для учителей',
+                backLink: '← Вернуться к входу студентов'
+            },
+            KZ: {
+                title: '👨‍🏫 Ұстаздар үшін кіру',
+                subtitle: 'Оқушылардың бағаларын басқару',
+                labelLogin: 'Логин',
+                loginPlaceholder: 'Логинді енгізіңіз',
+                labelPassword: 'Құпия сөз',
+                passwordPlaceholder: 'Құпия сөзді енгізіңіз',
+                submit: 'Кіру',
+                regLink: 'Ұстаздар үшін тіркелу',
+                backLink: '← Студенттерге оралу'
+            },
+            EN: {
+                title: '👨‍🏫 Teacher Login',
+                subtitle: 'Manage your students grades',
+                labelLogin: 'Login',
+                loginPlaceholder: 'Enter your login',
+                labelPassword: 'Password',
+                passwordPlaceholder: 'Enter your password',
+                submit: 'Login',
+                regLink: 'Teacher registration',
+                backLink: '← Back to student login'
+            }
+        };
+
+        function applyTeacherLang(lang) {
+            const L = teacherTranslations[lang] || teacherTranslations['RU'];
+            // Header and subtitle
+            const headerH1 = document.querySelector('.header h1');
+            const headerP = document.querySelector('.header p');
+            if (headerH1) headerH1.textContent = L.title;
+            if (headerP) headerP.textContent = L.subtitle;
+
+            // Labels and placeholders
+            const lblLogin = document.querySelector('label[for="login"]');
+            const inputLogin = document.getElementById('login');
+            const lblPass = document.querySelector('label[for="password"]');
+            const inputPass = document.getElementById('password');
+            const submitBtn = document.querySelector('.submit-btn');
+            const regLink = document.getElementById('regLink');
+            const backLink = document.getElementById('backToStudent');
+
+            if (lblLogin) lblLogin.textContent = L.labelLogin;
+            if (inputLogin) inputLogin.placeholder = L.loginPlaceholder;
+            if (lblPass) lblPass.textContent = L.labelPassword;
+            if (inputPass) inputPass.placeholder = L.passwordPlaceholder;
+            if (submitBtn) submitBtn.textContent = L.submit;
+            if (regLink) regLink.textContent = L.regLink;
+            if (backLink) backLink.textContent = L.backLink;
+
+            // Update links to keep language parameter
+            const param = `?lang=${lang}`;
+            if (regLink) regLink.href = 'teacher_registration.html' + param;
+            if (backLink) backLink.href = 'fafa.html' + param;
+
+            // Persist choice
+            try { localStorage.setItem('currentLanguage', lang); } catch (e) {}
+        }
+
+        // On load: detect lang from URL or localStorage
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLang = urlParams.get('lang');
+            const stored = localStorage.getItem('currentLanguage');
+            const lang = urlLang || stored || 'RU';
+            applyTeacherLang(lang);
+        })();
+
+        document.getElementById('teacherLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const login = document.getElementById('login').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!login || !password) {
+                showMessage('Пожалуйста, заполните все поля', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/login-teacher', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Сохраняем данные учителя
+                    localStorage.setItem('teacherData', JSON.stringify(result.teacher));
+                    
+                    showMessage('Вход успешен! Перенаправление...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'teacher_dashboard.html';
+                    }, 1000);
+                } else {
+                    showMessage(result.message || 'Неверный логин или пароль', 'error');
+                }
+            } catch (error) {
+                showMessage('Ошибка подключения к серверу', 'error');
+                console.error('Error:', error);
+            }
+        });
+
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

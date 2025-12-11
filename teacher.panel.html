@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель учителя</title>
+    <link rel="stylesheet" href="static.css"    >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .teacher-panel-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+        .panel-title {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: #007bff;
+            text-align: center;
+        }
+        .student-list {
+            margin-bottom: 30px;
+        }
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .student-info {
+            flex: 1;
+        }
+        .student-group {
+            color: #888;
+            font-size: 0.95rem;
+        }
+        .grade-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .grade-input {
+            width: 60px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .grade-btn {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 7px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .grade-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+        .grades-table th, .grades-table td {
+            border: 1px solid #eee;
+            padding: 10px;
+            text-align: center;
+        }
+        .grades-table th {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="teacher-panel-container">
+        <h2 class="panel-title">Панель учителя</h2>
+        <div class="student-list" id="student-list">
+            <!-- Список студентов будет загружен здесь -->
+        </div>
+        <h3 style="margin-top:40px;">Оценки студентов</h3>
+        <table class="grades-table" id="grades-table">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Группа</th>
+                    <th>Оценка</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Оценки будут отображаться здесь -->
+            </tbody>
+        </table>
+    </div>
+<script>
+// Пример данных студентов (можно заменить на загрузку с сервера)
+const students = [
+    { name: 'Еркебулан Смаилов', group: 'ИС-204', id: 1 },
+    { name: 'Айгерим Калдыбаева', group: 'ИС-204', id: 2 },
+    { name: 'Данияр Тлеуберген', group: 'ИС-203', id: 3 },
+    { name: 'Алихан Жумабаев', group: 'ИС-202', id: 4 }
+];
+
+// Оценки студентов (храним в localStorage)
+let grades = JSON.parse(localStorage.getItem('studentGrades') || '{}');
+
+function renderStudentList() {
+    const list = document.getElementById('student-list');
+    list.innerHTML = '';
+    students.forEach(student => {
+        const div = document.createElement('div');
+        div.className = 'student-item';
+        div.innerHTML = `
+            <div class="student-info">
+                <strong>${student.name}</strong>
+                <div class="student-group">Группа: ${student.group}</div>
+            </div>
+            <form class="grade-form" data-id="${student.id}">
+                <input type="number" min="1" max="100" class="grade-input" value="${grades[student.id] || ''}" placeholder="Оценка">
+                <button type="submit" class="grade-btn">Поставить</button>
+            </form>
+        `;
+        list.appendChild(div);
+    });
+}
+
+function renderGradesTable() {
+    const tbody = document.querySelector('#grades-table tbody');
+    tbody.innerHTML = '';
+    students.forEach(student => {
+        const grade = grades[student.id] || '';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${student.name}</td>
+            <td>${student.group}</td>
+            <td>${grade}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Обработка выставления оценки
+function setupGradeForms() {
+    document.querySelectorAll('.grade-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const studentId = this.getAttribute('data-id');
+            const input = this.querySelector('.grade-input');
+            const value = input.value;
+            if (value && value >= 1 && value <= 100) {
+                grades[studentId] = value;
+                localStorage.setItem('studentGrades', JSON.stringify(grades));
+                renderGradesTable();
+                input.value = value;
+            } else {
+                alert('Введите корректную оценку (1-100)');
+            }
+        });
+    });
+}
+
+// Инициализация панели
+function initTeacherPanel() {
+    renderStudentList();
+    renderGradesTable();
+    setupGradeForms();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+    if (userData.role !== 'teacher') {
+        window.location.href = "fafa.html";
+    }
+    initTeacherPanel();
+});
+</script>
+</body>
+</html>

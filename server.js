@@ -206,4 +206,159 @@ app.get("/api/schedule/:group", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Сервер запущен на http://localhost:${PORT}`);
 });
+const teacherSchema = new mongoose.Schema({
+    login: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    fullName: { type: String, required: true },
+    group: { type: String, required: true },
+    phone: { type: String, required: true }
+});
+
+const Teacher = mongoose.model("Teacher", teacherSchema);
+
+// Схема оценок
+const gradeSchema = new mongoose.Schema({
+    studentLogin: { type: String, required: true },
+    subject: { type: String, required: true },
+    grade: { type: Number, required: true, min: 0, max: 100 },
+    group: { type: String, required: true },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+const Grade = mongoose.model("Grade", gradeSchema);
+
+// Регистрация учителя
+app.post("/register-teacher", async (req, res) => {
+    const { login, password, fullName, group, phone } = req.body;
+
+    if (!login || !password || !fullName || !group || !phone) {
+        return res.status(400).send({ message: "Все поля обязательны." });
+    }
+
+    try {
+        const existingTeacher = await Teacher.findOne({ login });
+        if (existingTeacher) {
+            return res.status(400).send({ message: "Логин уже занят." });
+        }
+
+        const newTeacher = new Teacher({ login, password, fullName, group, phone });
+        await newTeacher.save();
+        
+        res.status(201).send({ message: "Учитель зарегистрирован." });
+    } catch (error) {
+        console.error("Ошибка регистрации учителя:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
+
+// Вход учителя
+app.post("/login-teacher", async (req, res) => {
+    const { login, password } = req.body;
+
+    if (!login || !password) {
+        return res.status(400).send({ message: "Логин и пароль обязательны." });
+    }
+
+    try {
+        const teacher = await Teacher.findOne({ login });
+        if (!teacher || teacher.password !== password) {
+            return res.status(401).send({ message: "Неверный логин или пароль." });
+        }
+
+        res.status(200).send({
+            message: "Вход успешен!",
+            teacher: {
+                login: teacher.login,
+                fullName: teacher.fullName,
+                group: teacher.group,
+                phone: teacher.phone
+            }
+        });
+    } catch (error) {
+        console.error("Ошибка входа учителя:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
+
+// Получить студентов группы
+app.get("/api/students/:group", async (req, res) => {
+    const group = decodeURIComponent(req.params.group);
+
+    try {
+        const students = await User.find({ group: group });
+        res.json(students.map(s => ({
+            login: s.login,
+            name: s.name,
+            email: s.email
+        })));
+    } catch (error) {
+        console.error("Ошибка получения студентов:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
+
+// Получить оценки группы
+app.get("/api/grades/:group", async (req, res) => {
+    const group = decodeURIComponent(req.params.group);
+
+    try {
+        const grades = await Grade.find({ group: group });
+        
+        // Формируем объект { studentLogin: { subject: grade } }
+        const gradesObj = {};
+        grades.forEach(g => {
+            if (!gradesObj[g.studentLogin]) gradesObj[g.studentLogin] = {};
+            gradesObj[g.studentLogin][g.subject] = g.grade;
+        });
+
+        res.json(gradesObj);
+    } catch (error) {
+        console.error("Ошибка получения оценок:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
+
+// Сохранить оценку
+app.post("/api/save-grade", async (req, res) => {
+    const { studentLogin, subject, grade, group } = req.body;
+
+    if (!studentLogin || !subject || grade === undefined || !group) {
+        return res.status(400).send({ message: "Все поля обязательны." });
+    }
+
+    try {
+        // Обновляем или создаем оценку
+        await Grade.findOneAndUpdate(
+            { studentLogin, subject, group },
+            { grade, updatedAt: new Date() },
+            { upsert: true, new: true }
+        );
+
+        res.status(200).send({ message: "Оценка сохранена." });
+    } catch (error) {
+        console.error("Ошибка сохранения оценки:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
+// Добавьте этот эндпоинт в server.js (после других эндпоинтов для оценок)
+
+// Получить оценки конкретного студента
+app.get("/api/student-grades/:studentLogin", async (req, res) => {
+    const studentLogin = decodeURIComponent(req.params.studentLogin);
+
+    try {
+        const grades = await Grade.find({ studentLogin: studentLogin });
+        
+        // Формируем объект { subject: grade }
+        const gradesObj = {};
+        grades.forEach(g => {
+            gradesObj[g.subject] = g.grade;
+        });
+
+        res.json(gradesObj);
+    } catch (error) {
+        console.error("Ошибка получения оценок студента:", error);
+        res.status(500).send({ message: "Ошибка сервера." });
+    }
+});
 

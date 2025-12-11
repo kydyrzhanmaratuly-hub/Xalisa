@@ -10,8 +10,8 @@
   <div class="card">
     <h3>QR для сайта</h3>
     <div>
-      <label for="url">Вставьте URL вашего сайта</label>
-      <input id="url" placeholder="https://your-github-username.github.io/your-repo/" />
+      <label for="url">Ссылка на сайт (готово):</label>
+      <input id="url" value="https://kydyrzhanmaratuly-hub.github.io/Xalisa/" placeholder="https://your-github-username.github.io/your-repo/" />
       <button id="gen">Сгенерировать</button>
     </div>
     <div id="qrcode"></div>
@@ -60,9 +60,12 @@
       }, 200);
     });
 
-    // generate on load only if there's a value
+    // auto-generate QR for the published site on load
     window.addEventListener('DOMContentLoaded', ()=>{
       const el = document.getElementById('url');
+      // ensure value is the published site
+      if (!el.value || !el.value.trim()) el.value = 'https://kydyrzhanmaratuly-hub.github.io/Xalisa/';
+      // trigger generation
       if (el.value && el.value.trim()) btn.click();
     });
   </script>

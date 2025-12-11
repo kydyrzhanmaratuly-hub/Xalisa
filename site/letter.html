@@ -18,7 +18,7 @@
 </head>
 <body>
   <div class="card">
-    <h1>Послание</h1>
+    <h1>Хат</h1>
     <div class="poem">
 Халиса, сені күнде көргім келіп, көптің арасынан үнемі өз көзіңді іздеймін. Говорят, любовь живёт три года, бірақ менің саған деген махаббатым мәңгілік. Қазір осы хатты жазудың өзі сенімен сырласып, сөйлескім келеді. Көптің арасында болсамда сенсіз жалгыздык. «Тілеп алғаным», мені кешір. Сенен алыстап, ұмытамын деп ойладым менен алшақтап, бақытты боларсың дедім. Бірақ саған еш жан тең келмейді. Көрсін-көрмесін адамдар, менің саған деген махаббатым — сол баяғы. Жазбай өкініп, өзімнің тағдырымды сен екеніңді біліп жібергенше, тырысып сені көріп, жыраққа кеткенім мың есе артық. Қайтадан келші қасыма. Ернар Амандықтың өленімен, сенің бейненді сол видеолардан көрумен өтуде.  Сенің қасында болған тыныштық өзі көп заттар айтады. Күнім, түнімен алмасып сені ойлаумен жүрмін.
 Эти строки тебе…
@@ -46,19 +46,7 @@
     </div>
     <div class="controls">
       <a class="btn ghost" href="#" onclick="window.close();return false;">Закрыть</a>
-      <a id="sendInsta" class="btn" href="#" onclick="openInstagram(event)">Отправить</a>
     </div>
   </div>
-  <script>
-    function openInstagram(e){
-      e.preventDefault();
-      const username = 'kydyrzhan_maratuly';
-      const instagramScheme = `instagram://user?username=${username}`;
-      const webFallback = 'https://www.instagram.com/kydyrzhan_maratuly?igsh=MWs5czBoNXF0Y3E1Yg%3D%3D&utm_source=qr';
-      const now = Date.now();
-      try{ window.location.href = instagramScheme; } catch(e){}
-      setTimeout(()=>{ if (Date.now() - now < 2000) window.location.href = webFallback; }, 800);
-    }
-  </script>
 </body>
 </html>
